@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: postgresql
+    restart: unless-stopped
+    environment:
+      # Database credentials
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: network_alarm_db
+      
+      # PostgreSQL configuration
+      POSTGRES_HOST_AUTH_METHOD: scram-sha-256
+      POSTGRES_INITDB_ARGS: --data-checksums
+      
+      # Additional PostgreSQL settings
+      PGDATA: /var/lib/postgresql/data/pgdata
+    
+    # Port mapping
+    ports:
+      - "5432:5432"
+    
+    # Volume mappings
+    volumes:
+      # Specific host path volume mapping as requested
+      - /home/rubbershredder/dataStore/postgres/data:/var/lib/postgresql/data
+      
+      # Optional: Custom initialization scripts
+      # - ./init-scripts:/docker-entrypoint-initdb.d
+      
+      # Optional: Custom PostgreSQL configuration
+      # - ./postgresql.conf:/etc/postgresql/postgresql.conf
+    
+    # Resource constraints (optional)
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '1'
+          memory: 1G
+    
+    # Network configuration
+    networks:
+      - postgres_network
+    
+    # Health check
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+# Network definition
+networks:
+  postgres_network:
+    driver: bridge
