@@ -167,7 +167,3 @@ Add your API endpoints documentation here for both Flask and Strapi APIs.
 2. Follow the coding standards for each service
 3. Test your changes thoroughly
 4. Submit a pull request with a clear description
-
-## License
-
-[Add your license here]
