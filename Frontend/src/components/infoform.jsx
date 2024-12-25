@@ -169,7 +169,7 @@
           <Box
             sx={{
               minHeight: '100vh',
-              background: 'linear-gradient(135deg,rgb(208, 138, 252) 0%,rgb(41, 27, 138) 50%,rgb(53, 43, 193) 100%)',
+              background: 'linear-gradient(to right, rgb(208, 138, 252) 0%, rgb(71, 48, 185) 50%, rgb(71, 48, 185) 100%);',
               py: 4,
             }}
           >
@@ -395,7 +395,7 @@
                           value={formData.address}
                           onChange={handleChange}
                           multiline
-                          rows={3}
+                          rows={2}
                           InputProps={{
                             startAdornment: (
                               <InputAdornment position="start">
@@ -407,6 +407,7 @@
                       </Grid>
                     </Grid>
   
+
                     <Button
                       type="submit"
                       variant="contained"
