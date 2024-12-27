@@ -169,6 +169,7 @@
           <Box
             sx={{
               minHeight: '100vh',
+              minWidth:'100vw',
               background: 'linear-gradient(to right, rgb(208, 138, 252) 0%, rgb(71, 48, 185) 50%, rgb(71, 48, 185) 100%);',
               py: 4,
             }}
