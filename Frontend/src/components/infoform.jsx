@@ -415,7 +415,7 @@
                       fullWidth
                       sx={{
                         bgcolor: 'rgb(222, 82, 43)',
-                        '&:hover': { bgcolor: 'rgba(216, 148, 246, 0.95)' },
+                        '&:hover': { bgcolor: ' #0D1F2D' },
                         py: 1.5,
                         borderRadius: 1.5,
                         textTransform: 'none',
