@@ -1,323 +1,280 @@
-import React, { useState } from 'react';
+/* eslint-disable no-unused-vars */
+import React from 'react';
 import { 
+  Box,
   Container,
+  Typography,
+  Button,
+  IconButton,
   Grid,
   Card,
   CardContent,
-  Typography,
-  Button,
-  Chip,
   Avatar,
-  IconButton,
-  Box,
-  useTheme,
-  useMediaQuery,
-  Fab,
-  Paper
+  Chip,
+  LinearProgress,
+  Paper,
+  AppBar,
+  Toolbar,
+  createTheme,
+  ThemeProvider,
+  CssBaseline
 } from '@mui/material';
 import {
-  Notifications as NotificationsIcon,
-  ArrowForward as ArrowForwardIcon,
-  CalendarToday as CalendarTodayIcon
+  NotificationsOutlined,
+  PersonOutline,
+  SettingsOutlined,
+  CalendarToday,
+  ArrowForward
 } from '@mui/icons-material';
 
-// Sample data moved to separate file in real application
-const categories = [
-  { id: 'competitions', label: 'Competitions', icon: '🏆' },
-  { id: 'hackathons', label: 'Hackathons', icon: '💻' },
-  { id: 'assessments', label: 'Assessments', icon: '📝' },
-  { id: 'scholarships', label: 'Scholarships', icon: '🎓' },
-  { id: 'workshops', label: 'Workshops', icon: '🔧' },
-  { id: 'conferences', label: 'Conferences', icon: '👥' },
-  { id: 'cultural', label: 'Cultural', icon: '🎭' }
+// Custom theme based on the retro design
+const theme = createTheme({
+  palette: {
+    mode: 'light',
+    primary: {
+      main: 'rgb(231, 88, 48)',
+    },
+    secondary: {
+      main: 'rgb(149, 167, 179)',
+    },
+    background: {
+      default: ' #0D1F2D',
+      paper: 'rgb(246, 242, 242)',
+    },
+    text: {
+      primary: 'rgb(245, 240, 240)',
+      secondary: 'rgba(255, 255, 255, 0.7)',
+    },
+  },
+  typography: {
+    fontFamily: '"Space Grotesk", sans-serif',
+    h4: {
+      fontWeight: 700,
+      letterSpacing: 1,
+    },
+    h6: {
+      fontWeight: 600,
+      letterSpacing: 0.5,
+    },
+  },
+  components: {
+    MuiContainer: {
+      styleOverrides: {
+        root: {
+          maxWidth: '100% !important',
+          padding: '0 !important',
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: 20,
+          textTransform: 'uppercase',
+          padding: '8px 24px',
+        },
+      },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          backgroundColor: 'rgba(136, 170, 198, 0.41)',
+          backdropFilter: 'blur(10px)',
+        },
+      },
+    },
+  },
+});
+
+// Static data
+const analyticsData = [
 ];
 
-const opportunities = [
+const opportunitiesData = [
+  
   {
-    id: 1,
-    title: "Technical Symposium 2024",
-    organization: "Engineering College",
-    registeredCount: 3078,
-    daysLeft: 18,
-    status: "Online",
-    type: "Free",
-    logo: "/api/placeholder/50/50"
+    title: 'AI Hackathon',
+    description: 'Build the future',
+    events: 'events-2'
   },
-  {
-    id: 1,
-    title: "Technical Symposium 2024",
-    organization: "Engineering College",
-    registeredCount: 3078,
-    daysLeft: 18,
-    status: "Online",
-    type: "Free",
-    logo: "/api/placeholder/50/50"
-  },
-  {
-    id: 1,
-    title: "Technical Symposium 2024",
-    organization: "Engineering College",
-    registeredCount: 3078,
-    daysLeft: 18,
-    status: "Online",
-    type: "Free",
-    logo: "/api/placeholder/50/50"
-  },
-  {
-    id: 2,
-    title: "AI Workshop Series",
-    organization: "Tech Institute",
-    registeredCount: 1268,
-    daysLeft: 2,
-    status: "Offline",
-    type: "Paid",
-    logo: "/api/placeholder/50/50"
-  }
 ];
 
-const upcomingEvents = [
-  {
-    id: 1,
-    title: "Code Olympics 2024",
-    date: "Mar 15, 2024",
-    time: "10:00 AM",
-    type: "Competition"
-  },
-  {
-    id: 2,
-    title: "Data Science Workshop",
-    date: "Mar 18, 2024",
-    time: "2:00 PM",
-    type: "Workshop"
-  },
-  {
-    id: 3,
-    title: "Tech Career Fair",
-    date: "Mar 20, 2024",
-    time: "11:00 AM",
-    type: "Career Fair"
-  }
+const eventsData = [
+  { title: 'Web3 Summit', date: 'Mar 15, 2024' },
+  { title: 'Design Systems Workshop', date: 'Mar 18, 2024' },
+  { title: 'Product Launch', date: 'Mar 20, 2024' },
 ];
-
-const OpportunityCard = ({ opportunity }) => (
-  <Card 
-    sx={{ 
-      height: '100%',
-      background: 'linear-gradient(135deg, rgba(156, 39, 176, 0.1), rgba(156, 39, 176, 0.2))',
-      backdropFilter: 'blur(10px)',
-      border: '1px solid rgba(255, 255, 255, 0.1)',
-      transition: 'transform 0.2s',
-      '&:hover': {
-        transform: 'translateY(-4px)'
-      }
-    }}
-  >
-    <CardContent>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-        <Avatar
-          src={opportunity.logo}
-          alt={opportunity.title}
-          sx={{ width: 56, height: 56, border: '2px solid rgba(156, 39, 176, 0.3)' }}
-        />
-        <Box sx={{ display: 'flex', gap: 1 }}>
-          <Chip 
-            label={opportunity.status}
-            size="small"
-            sx={{ bgcolor: 'rgba(156, 39, 176, 0.2)', color: 'white' }}
-          />
-          <Chip 
-            label={opportunity.type}
-            size="small"
-            sx={{ bgcolor: 'rgba(156, 39, 176, 0.3)', color: 'white' }}
-          />
-        </Box>
-      </Box>
-      <Typography variant="h6" sx={{ color: 'white', mb: 1 }}>
-        {opportunity.title}
-      </Typography>
-      <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)', mb: 2 }}>
-        {opportunity.organization}
-      </Typography>
-      <Box 
-        sx={{ 
-          display: 'flex', 
-          justifyContent: 'space-between',
-          pt: 2,
-          borderTop: '1px solid rgba(255, 255, 255, 0.1)'
-        }}
-      >
-        <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-          {opportunity.registeredCount.toLocaleString()} Registered
-        </Typography>
-        <Typography variant="body2" sx={{ color: 'white' }}>
-          {opportunity.daysLeft} days left
-        </Typography>
-      </Box>
-    </CardContent>
-  </Card>
-);
-
-const EventItem = ({ event }) => (
-  <Paper 
-    sx={{ 
-      p: 2,
-      mb: 2,
-      bgcolor: 'rgba(156, 39, 176, 0.1)',
-      backdropFilter: 'blur(10px)',
-      border: '1px solid rgba(255, 255, 255, 0.1)',
-      '&:hover': {
-        bgcolor: 'rgba(156, 39, 176, 0.2)'
-      }
-    }}
-  >
-    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-        <Avatar sx={{ bgcolor: 'rgba(156, 39, 176, 0.2)' }}>
-          <CalendarTodayIcon />
-        </Avatar>
-        <Box>
-          <Typography variant="subtitle1" sx={{ color: 'white' }}>
-            {event.title}
-          </Typography>
-          <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-            {event.date} • {event.time}
-          </Typography>
-          <Chip 
-            label={event.type}
-            size="small"
-            sx={{ 
-              mt: 1,
-              bgcolor: 'rgba(156, 39, 176, 0.2)',
-              color: 'white'
-            }}
-          />
-        </Box>
-      </Box>
-      <IconButton 
-        sx={{ 
-          color: 'white',
-          '&:hover': { bgcolor: 'rgba(156, 39, 176, 0.2)' }
-        }}
-      >
-        <ArrowForwardIcon />
-      </IconButton>
-    </Box>
-  </Paper>
-);
 
 const Home = () => {
-  const [activeCategory, setActiveCategory] = useState('competitions');
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
-
   return (
-    <Box 
-      sx={{
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Box sx={{ 
+        display: 'flex', 
+        flexDirection: 'column',
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #9c27b0, #6a1b9a, #4a148c)',
-        py: 4
-      }}
-    >
-      <Container maxWidth="xl">
-        <Grid container spacing={3}>
-          <Grid item xs={12} lg={8}>
-            <Typography variant="h4" sx={{ color: 'white', mb: 3 }}>
-              Popular Opportunities
-            </Typography>
-            
-            <Box 
-              sx={{ 
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: 1,
-                mb: 3,
-                maxWidth: '100%',
-                overflow: 'auto'
-              }}
-            >
-              {categories.map((category) => (
+        width: '100vw',
+        overflow: 'hidden',
+        bgcolor: 'background.default'
+      }}>
+        {/* Top Navigation */}
+        <AppBar position="static" color="transparent" elevation={0}>
+          <Toolbar sx={{ px: { xs: 2, sm: 4 } }}>
+            <Box sx={{ 
+              flexGrow: 1, 
+              display: 'flex', 
+              gap: { xs: 1, sm: 3 },
+              overflow: 'auto'
+            }}>
+              {['Home','events','Profile', 'Settings'].map((item) => (
                 <Button
-                  key={category.id}
-                  variant={activeCategory === category.id ? "contained" : "outlined"}
-                  onClick={() => setActiveCategory(category.id)}
-                  sx={{
-                    borderColor: 'rgba(255, 255, 255, 0.3)',
-                    color: 'white',
-                    '&.MuiButton-contained': {
-                      bgcolor: 'rgba(156, 39, 176, 0.2)',
-                      '&:hover': {
-                        bgcolor: 'rgba(156, 39, 176, 0.3)'
-                      }
-                    },
-                    '&:hover': {
-                      bgcolor: 'rgba(156, 39, 176, 0.2)',
-                      borderColor: 'rgba(255, 255, 255, 0.5)'
-                    }
+                  key={item}
+                  color="inherit"
+                  sx={{ 
+                    opacity: 0.7,
+                    '&:hover': { opacity: 1 },
+                    minWidth: 'auto'
                   }}
                 >
-                  <span style={{ marginRight: '8px' }}>{category.icon}</span>
-                  {!isMobile && category.label}
+                  {item}
                 </Button>
               ))}
             </Box>
+            <IconButton color="primary">
+              <NotificationsOutlined />
+            </IconButton>
+            <Avatar sx={{ bgcolor: 'primary.main', ml: 2 }}>
+              <PersonOutline />
+            </Avatar>
+          </Toolbar>
+        </AppBar>
 
-            <Grid container spacing={3}>
-              {opportunities.map((opportunity) => (
-                <Grid key={opportunity.id} item xs={12} md={6}>
-                  <OpportunityCard opportunity={opportunity} />
-                </Grid>
-              ))}
+        {/* Main Content */}
+        <Box sx={{ 
+          flex: 1,
+          overflow: 'auto',
+          p: { xs: 2, sm: 4 }
+        }}>
+          <Grid container spacing={{ xs: 2, md: 4 }}>
+            {/* Left Sidebar */}
+            <Grid item xs={12} md={3}>
+              <Box sx={{ mb: 4 }}>
+                {analyticsData.map((item, index) => (
+                  <Box key={index} sx={{ mb: 3 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                      <Avatar
+                        sx={{
+                          bgcolor: index === 0 ? 'primary.main' : 'secondary.main',
+                          mr: 2,
+                        }}
+                      />
+                      <Typography variant="body2" color="text.secondary">
+                        {item.label}
+                      </Typography>
+                    </Box>
+                    <LinearProgress
+                      variant="determinate"
+                      value={item.value}
+                      sx={{
+                        height: 8,
+                        borderRadius: 4,
+                        bgcolor: 'rgba(255, 255, 255, 0.1)',
+                      }}
+                    />
+                  </Box>
+                ))}
+              </Box>
+            </Grid>
+
+            {/* Center Content */}
+            <Grid item xs={12} md={6}>
+              <Typography variant="h4" align="center" gutterBottom>
+                POPULAR OPPORTUNITIES
+              </Typography>
+              <Typography
+                variant="body1"
+                align="center"
+                color="text.secondary"
+                sx={{ mb: 4 }}
+              >
+                Discover trending opportunities and events in your field
+              </Typography>
+
+              
+
+              <Grid container spacing={3}>
+                {opportunitiesData.map((opportunity, index) => (
+                  <Grid item xs={12} sm={6} key={index}>
+                    <Card>
+                      <CardContent>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+                          <Avatar sx={{ bgcolor: 'primary.main', width: 48, height: 48 }} />
+                          <Chip
+                            label={opportunity.events}
+                            size="small"
+                            sx={{ bgcolor: 'secondary.main' }}
+                          />
+                        </Box>
+                        <Typography variant="h6" gutterBottom>
+                          {opportunity.title}
+                        </Typography>
+                        <Typography color="text.secondary" sx={{ mb: 2 }}>
+                          {opportunity.description}
+                        </Typography>
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            color: 'text.secondary',
+                          }}
+                        >
+                          
+                        </Box>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ))}
+              </Grid>
+            </Grid>
+
+            {/* Right Sidebar */}
+            <Grid item xs={12} md={3}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h6" gutterBottom>
+                    UPCOMING EVENTS
+                  </Typography>
+                  {eventsData.map((event, index) => (
+                    <Box
+                      key={index}
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        mb: 2,
+                        gap: 2,
+                      }}
+                    >
+                      <Avatar sx={{ bgcolor: 'primary.main' }}>
+                        <CalendarToday />
+                      </Avatar>
+                      <Box sx={{ flexGrow: 1 }}>
+                        <Typography variant="subtitle2">{event.title}</Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {event.date}
+                        </Typography>
+                      </Box>
+                      <IconButton size="small">
+                        <ArrowForward />
+                      </IconButton>
+                    </Box>
+                  ))}
+                </CardContent>
+              </Card>
             </Grid>
           </Grid>
-
-          <Grid item xs={12} lg={4}>
-            <Card 
-              sx={{ 
-                bgcolor: 'rgba(156, 39, 176, 0.1)',
-                backdropFilter: 'blur(10px)',
-                border: '1px solid rgba(255, 255, 255, 0.1)'
-              }}
-            >
-              <CardContent>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                  <Typography variant="h6" sx={{ color: 'white' }}>
-                    Upcoming Events
-                  </Typography>
-                  <Button 
-                    sx={{ 
-                      color: 'white',
-                      '&:hover': { bgcolor: 'rgba(156, 39, 176, 0.2)' }
-                    }}
-                  >
-                    View All
-                  </Button>
-                </Box>
-                {upcomingEvents.map((event) => (
-                  <EventItem key={event.id} event={event} />
-                ))}
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
-      </Container>
-
-      <Fab 
-        color="secondary"
-        sx={{ 
-          position: 'fixed',
-          bottom: 24,
-          right: 24,
-          bgcolor: 'rgba(156, 39, 176, 0.9)',
-          '&:hover': {
-            bgcolor: 'rgba(156, 39, 176, 1)',
-            transform: 'scale(1.1)'
-          }
-        }}
-      >
-        <NotificationsIcon />
-      </Fab>
-    </Box>
+        </Box>
+      </Box>
+    </ThemeProvider>
   );
 };
 
