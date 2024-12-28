@@ -69,7 +69,7 @@ import {
             sx={{
               position: 'relative',
               p: 6,
-              background: 'linear-gradient(to right, rgb(231, 88, 48) 0%, rgb(231, 88, 48) 50%,  #0D1F2D 100%);',
+              background: 'linear-gradient(to right, rgb(231, 88, 48) 0%, rgb(231, 88, 48) 100%);',
               color: 'black',
               display: { xs: 'none', md: 'flex' },
               flexDirection: 'column',
