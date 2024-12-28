@@ -23,7 +23,7 @@ import {
           src="../src/assets/Logo.png" // Replace with your actual logo path
           alt="Logo"
           sx={{
-            height: '100px', // Adjust size as needed
+            height: '110px', // Adjust size as needed
             width: 'auto'
           }}
         />
@@ -35,7 +35,7 @@ import {
           color: isMobile ? 'linear-gradient(135deg, #9333ea 0%, #7e22ce 50%, #6b21a8 100%)' : 'white' // Purple text for mobile view
         }}
       >
-        NetworkAlarm
+        Network Alarm
       </Typography>
       </Box>
     );
@@ -45,7 +45,7 @@ import {
         sx={{
           height: '100vh',
           width: '100vw',
-          background: 'linear-gradient(135deg, #9333ea 0%, #7e22ce 50%, #6b21a8 100%)',
+          background: 'linear-gradient(135deg,rgb(69, 47, 193) 0%,rgb(41, 27, 138) 50%,rgb(53, 43, 193) 100%)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -69,7 +69,7 @@ import {
             sx={{
               position: 'relative',
               p: 6,
-              background: 'linear-gradient(135deg, #9333ea 0%, #7e22ce 50%, #6b21a8 100%)',
+              background: 'linear-gradient(to right, rgb(208, 138, 252) 0%, rgb(196, 122, 230) 50%, rgb(71, 48, 184) 100%);',
               color: 'white',
               display: { xs: 'none', md: 'flex' },
               flexDirection: 'column',
@@ -106,7 +106,7 @@ import {
               height: 'auto',
             }}
           >
-            <Box color="purple" sx={{ width: '100%', maxWidth: '400px', mx: 'auto' }}>
+            <Box color="black" sx={{ width: '100%', maxWidth: '400px', mx: 'auto' }}>
               {isMobile && <Logo />} {/* Logo for mobile view */}
               
               <Typography 
@@ -176,8 +176,8 @@ import {
                   fullWidth
                   variant="contained"
                   sx={{
-                    bgcolor: '#9333ea',
-                    '&:hover': { bgcolor: '#7e22ce' },
+                    bgcolor: 'rgb(80, 55, 206)',
+                    '&:hover': { bgcolor: 'rgba(216, 148, 246, 0.95)' },
                     py: 1.5,
                     borderRadius: 1.5,
                     textTransform: 'none',
