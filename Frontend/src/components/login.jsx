@@ -32,7 +32,7 @@ import {
         variant="h5" 
         sx={{ 
           ml: 1, 
-          color: isMobile ? 'linear-gradient(135deg, #9333ea 0%, #7e22ce 50%, #6b21a8 100%)' : 'white' // Purple text for mobile view
+          color: isMobile ? ' #0D1F2D' : 'black' // Purple text for mobile view
         }}
       >
         Network Alarm
@@ -45,7 +45,7 @@ import {
         sx={{
           height: '100vh',
           width: '100vw',
-          background: 'linear-gradient(135deg,rgb(69, 47, 193) 0%,rgb(41, 27, 138) 50%,rgb(53, 43, 193) 100%)',
+          background: ' #0D1F2D',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -69,8 +69,8 @@ import {
             sx={{
               position: 'relative',
               p: 6,
-              background: 'linear-gradient(to right, rgb(208, 138, 252) 0%, rgb(196, 122, 230) 50%, rgb(71, 48, 184) 100%);',
-              color: 'white',
+              background: 'linear-gradient(to right, rgb(231, 88, 48) 0%, rgb(231, 88, 48) 50%,  #0D1F2D 100%);',
+              color: 'black',
               display: { xs: 'none', md: 'flex' },
               flexDirection: 'column',
               justifyContent: 'space-between',
@@ -86,11 +86,11 @@ import {
               >
                 Welcome Page
               </Typography>
-              <Typography variant="h6" sx={{ color: 'rgba(255,255,255,0.8)' }}>
+              <Typography variant="h6" sx={{ color: 'rgba(2, 2, 2, 0.93)' }}>
                 Sign in to continue access
               </Typography>
             </Box>
-            <Typography sx={{ color: 'rgba(255,255,255,0.6)' }}>
+            <Typography sx={{ color: 'rgba(9, 9, 9, 0.6)' }}>
               www.yoursite.com
             </Typography>
           </Box>
@@ -176,8 +176,8 @@ import {
                   fullWidth
                   variant="contained"
                   sx={{
-                    bgcolor: 'rgb(80, 55, 206)',
-                    '&:hover': { bgcolor: 'rgba(216, 148, 246, 0.95)' },
+                    bgcolor: ' #0D1F2D',
+                    '&:hover': { bgcolor: 'rgb(231, 88, 48)' },
                     py: 1.5,
                     borderRadius: 1.5,
                     textTransform: 'none',
@@ -197,17 +197,16 @@ import {
                     mb: 2.5
                   }}
                 >
-                  or Connect with Social Media
+                  or Register Now
                 </Typography>
   
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                   <Button
                     fullWidth
                     variant="contained"
-                    startIcon={<TwitterIcon />}
                     sx={{
-                      bgcolor: '#1DA1F2',
-                      '&:hover': { bgcolor: '#1a8cd8' },
+                      bgcolor: '#0D1F2D',
+                      '&:hover': { bgcolor: 'rgb(231, 88, 48)' },
                       py: 1.5,
                       borderRadius: 1.5,
                       textTransform: 'none',
@@ -215,23 +214,7 @@ import {
                       boxShadow: 'none'
                     }}
                   >
-                    Sign in with Twitter
-                  </Button>
-                  <Button
-                    fullWidth
-                    variant="contained"
-                    startIcon={<FacebookIcon />}
-                    sx={{
-                      bgcolor: '#4267B2',
-                      '&:hover': { bgcolor: '#365899' },
-                      py: 1.5,
-                      borderRadius: 1.5,
-                      textTransform: 'none',
-                      fontSize: '0.875rem',
-                      boxShadow: 'none'
-                    }}
-                  >
-                    Sign in with Facebook
+                    Sign up
                   </Button>
                 </Box>
               </Box>

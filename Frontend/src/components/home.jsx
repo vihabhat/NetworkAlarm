@@ -1,317 +1,280 @@
-import React, { useState } from 'react';
+/* eslint-disable no-unused-vars */
+import React from 'react';
 import { 
+  Box,
   Container,
+  Typography,
+  Button,
+  IconButton,
   Grid,
   Card,
   CardContent,
-  Typography,
-  Button,
-  Chip,
   Avatar,
-  IconButton,
-  Box,
-  Fab,
-  styled
+  Chip,
+  LinearProgress,
+  Paper,
+  AppBar,
+  Toolbar,
+  createTheme,
+  ThemeProvider,
+  CssBaseline
 } from '@mui/material';
 import {
-  NotificationsOutlined as NotificationsIcon,
-  ArrowForward as ArrowForwardIcon,
-  CalendarToday as CalendarTodayIcon
+  NotificationsOutlined,
+  PersonOutline,
+  SettingsOutlined,
+  CalendarToday,
+  ArrowForward
 } from '@mui/icons-material';
 
-// Styled components
-const GradientCard = styled(Card)(({ theme }) => ({
-  background: 'linear-gradient(135deg, #F6F4F0, #F6F4F0)',
-  border: '1px solid rgba(121, 215, 190, 0.2)',
-  transition: 'transform 0.3s ease-in-out',
-  height: '100%',
-  '&:hover': {
-    transform: 'translateY(-4px)',
-  }
-}));
+// Custom theme based on the retro design
+const theme = createTheme({
+  palette: {
+    mode: 'light',
+    primary: {
+      main: 'rgb(231, 88, 48)',
+    },
+    secondary: {
+      main: 'rgb(149, 167, 179)',
+    },
+    background: {
+      default: ' #0D1F2D',
+      paper: 'rgb(246, 242, 242)',
+    },
+    text: {
+      primary: 'rgb(245, 240, 240)',
+      secondary: 'rgba(255, 255, 255, 0.7)',
+    },
+  },
+  typography: {
+    fontFamily: '"Space Grotesk", sans-serif',
+    h4: {
+      fontWeight: 700,
+      letterSpacing: 1,
+    },
+    h6: {
+      fontWeight: 600,
+      letterSpacing: 0.5,
+    },
+  },
+  components: {
+    MuiContainer: {
+      styleOverrides: {
+        root: {
+          maxWidth: '100% !important',
+          padding: '0 !important',
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: 20,
+          textTransform: 'uppercase',
+          padding: '8px 24px',
+        },
+      },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          backgroundColor: 'rgba(136, 170, 198, 0.41)',
+          backdropFilter: 'blur(10px)',
+        },
+      },
+    },
+  },
+});
 
-const GradientButton = styled(Button)(({ theme }) => ({
-  background: 'linear-gradient(45deg, #2E5077, #4DA1A9)',
-  color: 'white',
-  '&:hover': {
-    background: 'linear-gradient(45deg, #4DA1A9, #2E5077)',
-  }
-}));
-
-// Sample data
-const categories = [
-  { id: 'competitions', label: 'Competitions', icon: '🏆' },
-  { id: 'hackathons', label: 'Hackathons', icon: '💻' },
-  { id: 'assessments', label: 'Assessments', icon: '📝' },
-  { id: 'scholarships', label: 'Scholarships', icon: '🎓' },
-  { id: 'workshops', label: 'Workshops', icon: '🔧' },
-  { id: 'conferences', label: 'Conferences', icon: '👥' },
-  { id: 'cultural', label: 'Cultural', icon: '🎭' }
+// Static data
+const analyticsData = [
 ];
 
-const opportunities = [
+const opportunitiesData = [
+  
   {
-    id: 1,
-    title: "Technical Symposium 2024",
-    organization: "Engineering College",
-    registeredCount: 3078,
-    daysLeft: 18,
-    status: "Online",
-    type: "Free",
-    logo: "/api/placeholder/50/50"
+    title: 'AI Hackathon',
+    description: 'Build the future',
+    events: 'events-2'
   },
-  {
-    id: 2,
-    title: "AI Workshop Series",
-    organization: "Tech Institute",
-    registeredCount: 1268,
-    daysLeft: 2,
-    status: "Offline",
-    type: "Paid",
-    logo: "/api/placeholder/50/50"
-  },
-  {
-    id: 3,
-    title: "Coding Championship",
-    organization: "Tech Academy",
-    registeredCount: 2456,
-    daysLeft: 5,
-    status: "Online",
-    type: "Free",
-    logo: "/api/placeholder/50/50"
-  },
-  {
-    id: 4,
-    title: "Data Science Bootcamp",
-    organization: "Data Institute",
-    registeredCount: 892,
-    daysLeft: 12,
-    status: "Hybrid",
-    type: "Paid",
-    logo: "/api/placeholder/50/50"
-  }
 ];
 
-const upcomingEvents = [
-  {
-    id: 1,
-    title: "Code Olympics 2024",
-    date: "Mar 15, 2024",
-    time: "10:00 AM",
-    type: "Competition"
-  },
-  {
-    id: 2,
-    title: "Data Science Workshop",
-    date: "Mar 18, 2024",
-    time: "2:00 PM",
-    type: "Workshop"
-  },
-  {
-    id: 3,
-    title: "Tech Career Fair",
-    date: "Mar 20, 2024",
-    time: "11:00 AM",
-    type: "Career Fair"
-  },
-  {
-    id: 3,
-    title: "Tech Career Fair",
-    date: "Mar 20, 2024",
-    time: "11:00 AM",
-    type: "Career Fair"
-  }
+const eventsData = [
+  { title: 'Web3 Summit', date: 'Mar 15, 2024' },
+  { title: 'Design Systems Workshop', date: 'Mar 18, 2024' },
+  { title: 'Product Launch', date: 'Mar 20, 2024' },
 ];
-
-const OpportunityCard = ({ opportunity }) => (
-  <GradientCard>
-    <CardContent>
-      <Box display="flex" justifyContent="space-between" mb={2}>
-        <Avatar
-          src={opportunity.logo}
-          alt={opportunity.title}
-          sx={{ 
-            width: 56, 
-            height: 56, 
-            border: '2px solid #4DA1A9'
-          }}
-        />
-        <Box display="flex" gap={1}>
-          <Chip 
-            label={opportunity.status}
-            size="small"
-            sx={{ 
-              bgcolor: '#2E5077',
-              color: 'white',
-              '& .MuiChip-label': { px: 2 }
-            }}
-          />
-          <Chip 
-            label={opportunity.type}
-            size="small"
-            sx={{ 
-              bgcolor: '#4DA1A9',
-              color: 'white',
-              '& .MuiChip-label': { px: 2 }
-            }}
-          />
-        </Box>
-      </Box>
-      <Typography variant="h6" sx={{ color: '#2E5077', mb: 1 }}>
-        {opportunity.title}
-      </Typography>
-      <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
-        {opportunity.organization}
-      </Typography>
-      <Box 
-        sx={{ 
-          display: 'flex', 
-          justifyContent: 'space-between',
-          pt: 2,
-          borderTop: '1px solid rgba(0, 0, 0, 0.12)'
-        }}
-      >
-        <Typography variant="body2" sx={{ color: '#4DA1A9' }}>
-          {opportunity.registeredCount.toLocaleString()} Registered
-        </Typography>
-        <Typography variant="body2" sx={{ color: '#2E5077', fontWeight: 500 }}>
-          {opportunity.daysLeft} days left
-        </Typography>
-      </Box>
-    </CardContent>
-  </GradientCard>
-);
-
-const EventItem = ({ event }) => (
-  <Card sx={{ mb: 2, bgcolor: 'rgba(255, 255, 255, 0.9)' }}>
-    <CardContent>
-      <Box display="flex" alignItems="center" justifyContent="space-between">
-        <Box display="flex" alignItems="center" gap={2}>
-          <Avatar sx={{ bgcolor: '#2E5077' }}>
-            <CalendarTodayIcon />
-          </Avatar>
-          <Box>
-            <Typography variant="subtitle1" sx={{ color: '#2E5077' }}>
-              {event.title}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {event.date} • {event.time}
-            </Typography>
-            <Chip 
-              label={event.type}
-              size="small"
-              sx={{ 
-                mt: 1,
-                bgcolor: '#4DA1A9',
-                color: 'white'
-              }}
-            />
-          </Box>
-        </Box>
-        <IconButton sx={{ color: '#2E5077' }}>
-          <ArrowForwardIcon />
-        </IconButton>
-      </Box>
-    </CardContent>
-  </Card>
-);
 
 const Home = () => {
-  const [activeCategory, setActiveCategory] = useState('competitions');
-
   return (
-    <Box 
-      sx={{
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Box sx={{ 
+        display: 'flex', 
+        flexDirection: 'column',
         minHeight: '100vh',
-        background: 'linear-gradient(to right, #F6F4F0, #4DA1A9 60%, rgba(121, 215, 190, 0.2))',
-        py: 4
-      }}
-    >
-      <Container maxWidth="xl">
-        <Grid container spacing={3}>
-          <Grid item xs={12} lg={8}>
-            <Typography variant="h4" sx={{ color: '#2E5077', mb: 3 }}>
-              Popular Opportunities
-            </Typography>
-            
-            <Box 
-              sx={{ 
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: 1,
-                mb: 3
-              }}
-            >
-              {categories.map((category) => (
+        width: '100vw',
+        overflow: 'hidden',
+        bgcolor: 'background.default'
+      }}>
+        {/* Top Navigation */}
+        <AppBar position="static" color="transparent" elevation={0}>
+          <Toolbar sx={{ px: { xs: 2, sm: 4 } }}>
+            <Box sx={{ 
+              flexGrow: 1, 
+              display: 'flex', 
+              gap: { xs: 1, sm: 3 },
+              overflow: 'auto'
+            }}>
+              {['Home','events','Profile', 'Settings'].map((item) => (
                 <Button
-                  key={category.id}
-                  variant={activeCategory === category.id ? "contained" : "outlined"}
-                  onClick={() => setActiveCategory(category.id)}
-                  sx={{
-                    borderColor: activeCategory === category.id ? 'transparent' : '#2E5077',
-                    bgcolor: activeCategory === category.id ? '#2E5077' : 'transparent',
-                    color: activeCategory === category.id ? 'white' : '#2E5077',
-                    '&:hover': {
-                      bgcolor: activeCategory === category.id ? '#2E5077' : 'rgba(121, 215, 190, 0.1)',
-                    }
+                  key={item}
+                  color="inherit"
+                  sx={{ 
+                    opacity: 0.7,
+                    '&:hover': { opacity: 1 },
+                    minWidth: 'auto'
                   }}
                 >
-                  <span style={{ marginRight: '8px' }}>{category.icon}</span>
-                  {category.label}
+                  {item}
                 </Button>
               ))}
             </Box>
+            <IconButton color="primary">
+              <NotificationsOutlined />
+            </IconButton>
+            <Avatar sx={{ bgcolor: 'primary.main', ml: 2 }}>
+              <PersonOutline />
+            </Avatar>
+          </Toolbar>
+        </AppBar>
 
-            <Grid container spacing={3}>
-              {opportunities.map((opportunity) => (
-                <Grid key={opportunity.id} item xs={12} md={6}>
-                  <OpportunityCard opportunity={opportunity} />
-                </Grid>
-              ))}
+        {/* Main Content */}
+        <Box sx={{ 
+          flex: 1,
+          overflow: 'auto',
+          p: { xs: 2, sm: 4 }
+        }}>
+          <Grid container spacing={{ xs: 2, md: 4 }}>
+            {/* Left Sidebar */}
+            <Grid item xs={12} md={3}>
+              <Box sx={{ mb: 4 }}>
+                {analyticsData.map((item, index) => (
+                  <Box key={index} sx={{ mb: 3 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                      <Avatar
+                        sx={{
+                          bgcolor: index === 0 ? 'primary.main' : 'secondary.main',
+                          mr: 2,
+                        }}
+                      />
+                      <Typography variant="body2" color="text.secondary">
+                        {item.label}
+                      </Typography>
+                    </Box>
+                    <LinearProgress
+                      variant="determinate"
+                      value={item.value}
+                      sx={{
+                        height: 8,
+                        borderRadius: 4,
+                        bgcolor: 'rgba(255, 255, 255, 0.1)',
+                      }}
+                    />
+                  </Box>
+                ))}
+              </Box>
+            </Grid>
+
+            {/* Center Content */}
+            <Grid item xs={12} md={6}>
+              <Typography variant="h4" align="center" gutterBottom>
+                POPULAR OPPORTUNITIES
+              </Typography>
+              <Typography
+                variant="body1"
+                align="center"
+                color="text.secondary"
+                sx={{ mb: 4 }}
+              >
+                Discover trending opportunities and events in your field
+              </Typography>
+
+              
+
+              <Grid container spacing={3}>
+                {opportunitiesData.map((opportunity, index) => (
+                  <Grid item xs={12} sm={6} key={index}>
+                    <Card>
+                      <CardContent>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+                          <Avatar sx={{ bgcolor: 'primary.main', width: 48, height: 48 }} />
+                          <Chip
+                            label={opportunity.events}
+                            size="small"
+                            sx={{ bgcolor: 'secondary.main' }}
+                          />
+                        </Box>
+                        <Typography variant="h6" gutterBottom>
+                          {opportunity.title}
+                        </Typography>
+                        <Typography color="text.secondary" sx={{ mb: 2 }}>
+                          {opportunity.description}
+                        </Typography>
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            color: 'text.secondary',
+                          }}
+                        >
+                          
+                        </Box>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ))}
+              </Grid>
+            </Grid>
+
+            {/* Right Sidebar */}
+            <Grid item xs={12} md={3}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h6" gutterBottom>
+                    UPCOMING EVENTS
+                  </Typography>
+                  {eventsData.map((event, index) => (
+                    <Box
+                      key={index}
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        mb: 2,
+                        gap: 2,
+                      }}
+                    >
+                      <Avatar sx={{ bgcolor: 'primary.main' }}>
+                        <CalendarToday />
+                      </Avatar>
+                      <Box sx={{ flexGrow: 1 }}>
+                        <Typography variant="subtitle2">{event.title}</Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {event.date}
+                        </Typography>
+                      </Box>
+                      <IconButton size="small">
+                        <ArrowForward />
+                      </IconButton>
+                    </Box>
+                  ))}
+                </CardContent>
+              </Card>
             </Grid>
           </Grid>
-
-          <Grid item xs={12} lg={4}>
-            <Card 
-              sx={{ 
-                bgcolor: 'rgba(255, 255, 255, 0.9)',
-                backdropFilter: 'blur(10px)',
-                border: '1px solid rgba(121, 215, 190, 0.2)'
-              }}
-            >
-              <CardContent>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                  <Typography variant="h6" sx={{ color: '#2E5077' }}>
-                    Upcoming Events
-                  </Typography>
-                  <Button sx={{ color: '#4DA1A9' }}>
-                    View All
-                  </Button>
-                </Box>
-                {upcomingEvents.map((event) => (
-                  <EventItem key={event.id} event={event} />
-                ))}
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
-      </Container>
-
-      <Fab 
-        color="primary"
-        sx={{ 
-          position: 'fixed',
-          bottom: 24,
-          right: 24,
-          bgcolor: '#2E5077',
-          '&:hover': {
-            bgcolor: '#4DA1A9'
-          }
-        }}
-      >
-        <NotificationsIcon />
-      </Fab>
-    </Box>
+        </Box>
+      </Box>
+    </ThemeProvider>
   );
 };
 

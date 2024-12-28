@@ -45,7 +45,7 @@
   const theme = createTheme({
     palette: {
       primary: {
-        main: 'rgb(48, 43, 198)', // Purple shade matching previous design
+        main: 'rgb(222, 82, 43)', //the info box highlight
       },
     },
     typography: {
@@ -61,7 +61,7 @@
           root: {
             '& .MuiOutlinedInput-root': {
               '&:hover fieldset': {
-                borderColor: 'rgb(69, 47, 193)',
+                borderColor: 'rgb(222, 82, 43)',
               },
             },
           },
@@ -170,7 +170,7 @@
             sx={{
               minHeight: '100vh',
               minWidth:'100vw',
-              background: 'linear-gradient(to right, rgb(208, 138, 252) 0%, rgb(71, 48, 185) 50%, rgb(71, 48, 185) 100%);',
+              background: 'rgb(13, 32, 48)',//background
               py: 4,
             }}
           >
@@ -218,7 +218,7 @@
                   sx={{
                     p: { xs: 2, sm: 4 },
                     borderRadius: 2,
-                    background: 'rgba(255, 255, 255, 0.98)',
+                    background: ' #F9F9F1',//info card
                   }}
                 >
                   <Typography variant="h4" fontWeight="bold" sx={{ mb: 4 }}>
@@ -414,7 +414,7 @@
                       variant="contained"
                       fullWidth
                       sx={{
-                        bgcolor: 'rgb(80, 55, 206)',
+                        bgcolor: 'rgb(222, 82, 43)',
                         '&:hover': { bgcolor: 'rgba(216, 148, 246, 0.95)' },
                         py: 1.5,
                         borderRadius: 1.5,
