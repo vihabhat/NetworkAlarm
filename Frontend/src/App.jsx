@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from '../src/components/login.jsx';
 import InfoForm from '../src/components/infoform.jsx';
 import Home from '../src/components/home.jsx';
+import Events from '../src/components/events.jsx';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 
@@ -17,6 +18,7 @@ const App = () => {
         
         <Route path="/infoform" element={<InfoForm/>} />
         <Route path="/home" element={<Home/>} />
+        <Route path="/events" element={<Events/>} />
         <Route path="/settings" element={<div>Settings Page</div>} />
       </Routes>
     </Router>
