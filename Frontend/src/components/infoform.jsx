@@ -330,7 +330,7 @@ const InfoForm = () => {
                     fontSize: { xs: "1.5rem", sm: "2rem" },
                   }}
                 >
-                  Information Form
+                  Registration Form
                 </Typography>
 
                 <form onSubmit={handleSubmit}>
@@ -565,7 +565,7 @@ const InfoForm = () => {
                     }}
                     size="large"
                   >
-                    Submit Information
+                    Register
                   </Button>
                 </form>
               </Paper>
