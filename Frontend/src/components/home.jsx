@@ -1,6 +1,22 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
-import { Heart, MessageSquare, Share2, Bell, Search, Home, Calendar, Compass, User, Users, Settings, Menu,LogOut, PlusCircle, Check } from 'lucide-react';
+import { useNavigate } from "react-router-dom";
+import {
+  Heart,
+  MessageSquare,
+  Share2,
+  Bell,
+  Search,
+  Home,
+  Calendar,
+  Compass,
+  User,
+  Users,
+  Settings,
+  Menu,
+  LogOut,
+  PlusCircle,
+  Check,
+} from "lucide-react";
 
 const defaultCollegeEvents = [
   {
@@ -8,7 +24,8 @@ const defaultCollegeEvents = [
     college: "MIT College",
     verified: true,
     title: "Tech Innovation Summit 2024",
-    description: "Join us for a day of cutting-edge technology discussions and networking.",
+    description:
+      "Join us for a day of cutting-edge technology discussions and networking.",
     date: "2024-01-20",
     time: "09:00",
     likes: 24,
@@ -16,22 +33,23 @@ const defaultCollegeEvents = [
     shares: 2,
     image: "/api/placeholder/600/300",
     location: "Main Auditorium",
-    fullDescription: "A comprehensive day of technology discussions, workshops, and networking opportunities with industry leaders. Perfect for students and professionals alike.",
+    fullDescription:
+      "A comprehensive day of technology discussions, workshops, and networking opportunities with industry leaders. Perfect for students and professionals alike.",
     agenda: [
       "09:00 - Registration",
       "10:00 - Keynote Speech",
       "11:30 - Workshop Sessions",
       "13:00 - Networking Lunch",
       "14:30 - Panel Discussions",
-      "16:30 - Closing Remarks"
-    ]
-  }
+      "16:30 - Closing Remarks",
+    ],
+  },
 ];
 const userData = {
   name: "John Doe",
   email: "john@example.com",
   role: "Student",
-  college: "MIT College"
+  college: "MIT College",
 };
 
 const upcomingEvents = [
@@ -39,29 +57,29 @@ const upcomingEvents = [
     id: 2,
     title: "AI Workshop",
     date: "2024-01-25",
-    time: "14:00"
+    time: "14:00",
   },
   {
     id: 3,
     title: "Career Fair",
     date: "2024-01-28",
-    time: "10:00"
-  }
+    time: "10:00",
+  },
 ];
 
 const navItems = [
-  { text: 'Home', icon: Home },
-  { text: 'Events', icon: Calendar },
-  { text: 'Explore', icon: Compass },
-  { text: 'Community', icon: Users },
-  { text: 'Settings', icon: Settings }
+  { text: "Home", icon: Home },
+  { text: "Events", icon: Calendar },
+  { text: "Explore", icon: Compass },
+  { text: "Community", icon: Users },
+  { text: "Settings", icon: Settings },
 ];
 
 const SocialAction = ({ icon: Icon, count, isActive, onClick }) => (
-  <button 
+  <button
     onClick={onClick}
     className={`flex items-center gap-2 cursor-pointer transition-colors duration-200 ${
-      isActive ? 'text-orange-500' : 'text-gray-400 hover:text-orange-500'
+      isActive ? "text-orange-500" : "text-gray-400 hover:text-orange-500"
     }`}
   >
     <Icon size={20} />
@@ -78,29 +96,29 @@ const EventCard = ({ event }) => {
 
   const handleLike = (e) => {
     e.stopPropagation();
-    setLikes(prev => isLiked ? prev - 1 : prev + 1);
+    setLikes((prev) => (isLiked ? prev - 1 : prev + 1));
     setIsLiked(!isLiked);
   };
 
   const handleComment = (e) => {
     e.stopPropagation();
-    setComments(prev => prev + 1);
+    setComments((prev) => prev + 1);
   };
 
   const handleShare = (e) => {
     e.stopPropagation();
-    setShares(prev => prev + 1);
+    setShares((prev) => prev + 1);
   };
 
   return (
-    <div 
+    <div
       onClick={() => navigate(`/events/${event.id}`)}
       className="bg-slate-800 rounded-2xl overflow-hidden cursor-pointer transition-transform duration-200 hover:scale-105"
     >
       <div className="relative h-48">
-        <img 
-          src={event.image} 
-          alt={event.title} 
+        <img
+          src={event.image}
+          alt={event.title}
           className="w-full h-full object-cover"
         />
       </div>
@@ -127,8 +145,17 @@ const EventCard = ({ event }) => {
         <h2 className="text-xl font-bold mb-2">{event.title}</h2>
         <p className="text-gray-400 mb-6">{event.description}</p>
         <div className="flex gap-6">
-          <SocialAction icon={Heart} count={likes} isActive={isLiked} onClick={handleLike} />
-          <SocialAction icon={MessageSquare} count={comments} onClick={handleComment} />
+          <SocialAction
+            icon={Heart}
+            count={likes}
+            isActive={isLiked}
+            onClick={handleLike}
+          />
+          <SocialAction
+            icon={MessageSquare}
+            count={comments}
+            onClick={handleComment}
+          />
           <SocialAction icon={Share2} count={shares} onClick={handleShare} />
         </div>
       </div>
@@ -138,7 +165,7 @@ const EventCard = ({ event }) => {
 
 const UserDropdown = ({ isOpen }) => {
   if (!isOpen) return null;
-  
+
   return (
     <div className="absolute right-0 top-12 w-64 bg-slate-800 rounded-lg shadow-lg border border-slate-700 overflow-hidden">
       <div className="p-4 border-b border-slate-700">
@@ -161,9 +188,9 @@ const UserDropdown = ({ isOpen }) => {
 
 const UpcomingEventCard = ({ event }) => {
   const navigate = useNavigate();
-  
+
   return (
-    <div 
+    <div
       onClick={() => navigate(`/events/${event.id}`)}
       className="bg-slate-800 p-4 rounded-lg cursor-pointer hover:bg-slate-700 transition-colors duration-200"
     >
@@ -177,20 +204,33 @@ const UpcomingEventCard = ({ event }) => {
 
 const AddEventForm = ({ open, onClose, onSubmit }) => {
   const [eventData, setEventData] = useState({
-    title: '',
-    description: '',
-    date: '',
-    time: '',
-    college: '',
-    image: '/api/placeholder/600/300'
+    title: "",
+    description: "",
+    date: "",
+    time: "",
+    college: "",
+    image: "/api/placeholder/600/300",
   });
 
   if (!open) return null;
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit({ ...eventData, verified: true, likes: 0, comments: 0, shares: 0 });
-    setEventData({ title: '', description: '', date: '', time: '', college: '', image: '/api/placeholder/600/300' });
+    onSubmit({
+      ...eventData,
+      verified: true,
+      likes: 0,
+      comments: 0,
+      shares: 0,
+    });
+    setEventData({
+      title: "",
+      description: "",
+      date: "",
+      time: "",
+      college: "",
+      image: "/api/placeholder/600/300",
+    });
     onClose();
   };
 
@@ -205,34 +245,44 @@ const AddEventForm = ({ open, onClose, onSubmit }) => {
               placeholder="Event Title"
               className="w-full p-2 rounded bg-slate-700"
               value={eventData.title}
-              onChange={e => setEventData({ ...eventData, title: e.target.value })}
+              onChange={(e) =>
+                setEventData({ ...eventData, title: e.target.value })
+              }
             />
             <textarea
               placeholder="Description"
               rows="3"
               className="w-full p-2 rounded bg-slate-700"
               value={eventData.description}
-              onChange={e => setEventData({ ...eventData, description: e.target.value })}
+              onChange={(e) =>
+                setEventData({ ...eventData, description: e.target.value })
+              }
             />
             <input
               type="text"
               placeholder="College Name"
               className="w-full p-2 rounded bg-slate-700"
               value={eventData.college}
-              onChange={e => setEventData({ ...eventData, college: e.target.value })}
+              onChange={(e) =>
+                setEventData({ ...eventData, college: e.target.value })
+              }
             />
             <div className="grid grid-cols-2 gap-4">
               <input
                 type="date"
                 className="p-2 rounded bg-slate-700"
                 value={eventData.date}
-                onChange={e => setEventData({ ...eventData, date: e.target.value })}
+                onChange={(e) =>
+                  setEventData({ ...eventData, date: e.target.value })
+                }
               />
               <input
                 type="time"
                 className="p-2 rounded bg-slate-700"
                 value={eventData.time}
-                onChange={e => setEventData({ ...eventData, time: e.target.value })}
+                onChange={(e) =>
+                  setEventData({ ...eventData, time: e.target.value })
+                }
               />
             </div>
             <div className="flex justify-end gap-4">
@@ -264,17 +314,17 @@ const NetworkAlarm = () => {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 
   useEffect(() => {
-      const handleClickOutside = (e) => {
-        if (sidebarRef.current && !sidebarRef.current.contains(e.target)) {
-          setMobileOpen(false);
-        }
-      };
-      if (mobileOpen) {
-        document.addEventListener("mousedown", handleClickOutside);
+    const handleClickOutside = (e) => {
+      if (sidebarRef.current && !sidebarRef.current.contains(e.target)) {
+        setMobileOpen(false);
       }
-      return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, [mobileOpen]);
-    
+    };
+    if (mobileOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [mobileOpen]);
+
   return (
     <div className="min-h-screen w-screen bg-slate-900">
       {/* Desktop Sidebar */}
@@ -305,7 +355,6 @@ const NetworkAlarm = () => {
           ))}
         </div>
       </div>
-      
 
       {/* Main Content */}
       <div className="md:ml-80">
@@ -319,10 +368,9 @@ const NetworkAlarm = () => {
             >
               <Menu size={24} />
             </button>
-            
 
-            {/* Search and Notifications */}
-            <div className="flex items-center gap-4">
+            {/* Search, Notifications, and User Dropdown - Right Aligned */}
+            <div className="flex items-center gap-4 ml-auto">
               <div className="hidden sm:flex items-center gap-2 bg-slate-700 rounded-full px-4 py-2">
                 <input
                   type="text"
@@ -345,95 +393,102 @@ const NetworkAlarm = () => {
               </div>
             </div>
           </div>
+
           {/* Mobile Search Bar */}
-                <div className="sm:hidden p-4 border-t border-slate-700">
-                  <div className="flex items-center gap-2 bg-slate-700 rounded-full px-4 py-2">
-                    <input
-                      type="text"
-                      placeholder="Search events..."
-                      className="bg-transparent border-none outline-none w-full text-white placeholder-gray-400"
-                    />
-                    <Search size={20} />
-                  </div>
-                </div>
+          <div className="sm:hidden p-4 border-t border-slate-700">
+            <div className="flex items-center gap-2 bg-slate-700 rounded-full px-4 py-2">
+              <input
+                type="text"
+                placeholder="Search events..."
+                className="bg-transparent border-none outline-none w-full text-white placeholder-gray-400"
+              />
+              <Search size={20} />
+            </div>
+          </div>
         </header>
 
         {/* Main Content Area */}
         <main className="p-4 md:p-6 max-w-7xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-white">Events</h2>
-        <button
-          onClick={() => setAddEventOpen(true)}
-          className="flex items-center gap-2 bg-orange-500 px-4 py-2 rounded-lg hover:bg-orange-600"
-        >
-          <PlusCircle size={20} />
-          Add Event
-        </button>
-      </div>
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-white">Events</h2>
+            <button
+              onClick={() => setAddEventOpen(true)}
+              className="flex items-center gap-2 bg-orange-500 px-4 py-2 rounded-lg hover:bg-orange-600"
+            >
+              <PlusCircle size={20} />
+              Add Event
+            </button>
+          </div>
 
-      {/* Upcoming Events Section */}
-      <div className="mb-8">
-        <h3 className="text-xl font-bold text-white mb-4">Upcoming Events</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {upcomingEvents.map((event) => (
-            <UpcomingEventCard key={event.id} event={event} />
-          ))}
-        </div>
-      </div>
-
-      {/* Event Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {events.map((event) => (
-          <EventCard key={event.id} event={event} />
-        ))}
-      </div>
-
-      {/* Add Event Form */}
-      <AddEventForm open={addEventOpen} onClose={() => setAddEventOpen(false)} onSubmit={(newEvent) => setEvents([...events, newEvent])} />
-    </main>
-      {/* Mobile Sidebar */}
-      {mobileOpen && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 md:hidden">
-          <div ref={sidebarRef} className="w-64 h-full bg-slate-800 p-4">
-            {/* Sidebar content */}
-            <div className="flex items-center gap-4 mb-6">
-              <img
-                src="../src/assets/Logo.png"
-                alt="Logo"
-                className="w-12 h-12 object-contain"
-              />
-              <h1 className="text-xl font-bold text-white">
-                <span className="text-orange-500">Network</span> Alarm
-              </h1>
+          {/* Upcoming Events Section */}
+          <div className="mb-8">
+            <h3 className="text-xl font-bold text-white mb-4">
+              Upcoming Events
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {upcomingEvents.map((event) => (
+                <UpcomingEventCard key={event.id} event={event} />
+              ))}
             </div>
-            {navItems.map((item) => (
+          </div>
+
+          {/* Event Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {events.map((event) => (
+              <EventCard key={event.id} event={event} />
+            ))}
+          </div>
+
+          {/* Add Event Form */}
+          <AddEventForm
+            open={addEventOpen}
+            onClose={() => setAddEventOpen(false)}
+            onSubmit={(newEvent) => setEvents([...events, newEvent])}
+          />
+        </main>
+        {/* Mobile Sidebar */}
+        {mobileOpen && (
+          <div className="fixed inset-0 z-50 bg-black bg-opacity-50 md:hidden">
+            <div ref={sidebarRef} className="w-64 h-full bg-slate-800 p-4">
+              {/* Sidebar content */}
+              <div className="flex items-center gap-4 mb-6">
+                <img
+                  src="../src/assets/Logo.png"
+                  alt="Logo"
+                  className="w-12 h-12 object-contain"
+                />
+                <h1 className="text-xl font-bold text-white">
+                  <span className="text-orange-500">Network</span> Alarm
+                </h1>
+              </div>
+              {navItems.map((item) => (
+                <button
+                  key={item.text}
+                  className="flex items-center gap-4 p-4 text-gray-400 bg-slate-800 hover:text-orange-500 rounded-lg"
+                >
+                  <item.icon size={20} />
+                  <span>{item.text}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Bottom Navbar */}
+        <nav className="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 md:hidden">
+          <div className="flex justify-around p-4">
+            {navItems.slice(0, 4).map((item) => (
               <button
                 key={item.text}
-                className="flex items-center gap-4 p-4 text-gray-400 bg-slate-800 hover:text-orange-500 rounded-lg"
+                className="flex flex-col items-center gap-1 text-gray-400 hover:text-orange-500"
               >
                 <item.icon size={20} />
-                <span>{item.text}</span>
+                <span className="text-xs">{item.text}</span>
               </button>
             ))}
           </div>
-        </div>
-      )}
-
-      {/* Bottom Navbar */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 md:hidden">
-        <div className="flex justify-around p-4">
-          {navItems.slice(0, 4).map((item) => (
-            <button
-              key={item.text}
-              className="flex flex-col items-center gap-1 text-gray-400 hover:text-orange-500"
-            >
-              <item.icon size={20} />
-              <span className="text-xs">{item.text}</span>
-            </button>
-          ))}
-        </div>
-      </nav>
-    </div>
+        </nav>
+      </div>
     </div>
   );
 };
