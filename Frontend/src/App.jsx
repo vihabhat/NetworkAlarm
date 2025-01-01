@@ -1,8 +1,10 @@
+/* eslint-disable no-unused-vars */
 import 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from '../src/components/login.jsx';
 import InfoForm from '../src/components/infoform.jsx';
 import Home from '../src/components/home.jsx';
+import SuccessPage from '../src/components/successpage.jsx';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 
@@ -16,7 +18,9 @@ const App = () => {
         {/* Add more routes as your app grows */}
         
         <Route path="/infoform" element={<InfoForm/>} />
+        <Route path="/success" element={<SuccessPage />} />
         <Route path="/home" element={<Home/>} />
+        
         <Route path="/settings" element={<div>Settings Page</div>} />
       </Routes>
     </Router>

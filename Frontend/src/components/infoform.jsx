@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import {
   Container,
   Paper,
@@ -21,12 +20,35 @@ import {
   School,
   Phone,
   Badge,
-  CalendarToday,
   AccountCircle,
   Lock,
   Home,
 } from "@mui/icons-material";
+import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import Logo from "../assets/Logo.png";
+
+const theme = createTheme({
+  palette: { primary: { main: "rgb(222, 82, 43)" } },
+  typography: { fontFamily: "'Inter', sans-serif" },
+  components: {
+    MuiTextField: {
+      defaultProps: { variant: "outlined", fullWidth: true },
+      styleOverrides: {
+        root: {
+          "& .MuiOutlinedInput-root": {
+            backgroundColor: "#F9F9F1",
+            "&:hover fieldset": { borderColor: "rgb(222, 82, 43)" },
+          },
+          "& input:-webkit-autofill": {
+            "-webkit-box-shadow": "0 0 0 100px #F9F9F1 inset",
+            "-webkit-text-fill-color": "black",
+          },
+        },
+      },
+    },
+    MuiButton: { styleOverrides: { root: { textTransform: "none", padding: "12px" } } },
+  },
+});
 
 const textFieldStyles = {
   "& .MuiOutlinedInput-root": {
@@ -37,72 +59,16 @@ const textFieldStyles = {
     "&:hover": {
       backgroundColor: "#F9F9F1",
     },
-    // Handle the input adornment alignment for multiline
     "& .MuiInputAdornment-root": {
       alignItems: "flex-start",
-      marginTop: "13px", // Align with first line of text
+      marginTop: "13px",
     },
   },
-  // Maintain other styles
   "& input:-webkit-autofill, & textarea:-webkit-autofill": {
     "-webkit-box-shadow": "0 0 0 100px #F9F9F1 inset",
     "-webkit-text-fill-color": "black",
   },
-  "& input:-webkit-autofill:focus, & textarea:-webkit-autofill:focus": {
-    "-webkit-box-shadow": "0 0 0 100px #F9F9F1 inset",
-    "-webkit-text-fill-color": "black",
-  },
-  "& input:-webkit-autofill:hover, & textarea:-webkit-autofill:hover": {
-    "-webkit-box-shadow": "0 0 0 100px #F9F9F1 inset",
-    "-webkit-text-fill-color": "black",
-  },
-  "& input:autofill, & textarea:autofill": {
-    backgroundColor: "#F9F9F1 !important",
-    color: "black !important",
-  },
-  "& .MuiOutlinedInput-notchedOutline": {
-    borderColor: "rgba(0, 0, 0, 0.1)",
-  },
-  "&:hover .MuiOutlinedInput-notchedOutline": {
-    borderColor: "rgba(0, 0, 0, 0.2)",
-  },
 };
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: "rgb(222, 82, 43)",
-    },
-  },
-  typography: {
-    fontFamily: "'Inter', sans-serif",
-  },
-  components: {
-    MuiTextField: {
-      defaultProps: {
-        variant: "outlined",
-        fullWidth: true,
-      },
-      styleOverrides: {
-        root: {
-          "& .MuiOutlinedInput-root": {
-            "&:hover fieldset": {
-              borderColor: "rgb(222, 82, 43)",
-            },
-          },
-        },
-      },
-    },
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          textTransform: "none",
-          padding: "12px",
-        },
-      },
-    },
-  },
-});
 
 const InfoForm = () => {
   const navigate = useNavigate();
@@ -118,57 +84,39 @@ const InfoForm = () => {
     password: "",
     confirmPassword: "",
     address: "",
+    email: "",
   });
-
   const [errors, setErrors] = useState({});
 
-  const validatePhone = (phone) => {
-    const pattern = /^\d{10}$/;
-    return pattern.test(phone);
+  const fields = [
+    { name: "name", label: "Full Name", icon: <Person /> },
+    { name: "collegeName", label: "College Name", icon: <School /> },
+    { name: "email", label: "Email Address", icon: <EmailOutlinedIcon />, type: "email" },
+    { name: "phone", label: "Phone Number", icon: <Phone /> },
+    { name: "collegeId", label: "College ID", icon: <Badge /> },
+    { name: "username", label: "Username", icon: <AccountCircle /> },
+    { name: "password", label: "Password", icon: <Lock />, type: "password" },
+    { name: "confirmPassword", label: "Confirm Password", icon: <Lock />, type: "password" },
+    { name: "address", label: "Address (Optional)", icon: <Home />, multiline: true, rows: 2 },
+  ];
+
+  const yearOptions = ["1st Year", "2nd Year", "3rd Year", "4th Year", "5th Year"];
+
+  const validateForm = () => {
+    const newErrors = {};
+    Object.keys(formData).forEach((field) => {
+      if (!formData[field] && field !== "address") newErrors[field] = "This field is required";
+    });
+    if (formData.phone && !/^\d{10}$/.test(formData.phone)) newErrors.phone = "Invalid phone number";
+    if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = "Passwords do not match";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: "",
-      }));
-    }
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-    const requiredFields = [
-      "name",
-      "collegeName",
-      "phone",
-      "collegeId",
-      "yearOfStudy",
-      "username",
-      "password",
-      "confirmPassword",
-    ];
-    requiredFields.forEach((field) => {
-      if (!formData[field]) {
-        newErrors[field] = "This field is required";
-      }
-    });
-
-    if (formData.phone && !validatePhone(formData.phone)) {
-      newErrors.phone = "Please enter a valid 10-digit phone number";
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   const handleSubmit = async (e) => {
@@ -177,45 +125,27 @@ const InfoForm = () => {
       try {
         const response = await fetch("http://localhost:5000/api/logins", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formData),
         });
-
         const data = await response.json();
-
-        if (response.ok) {
-          toast.success("Registration successful!");
-          navigate("/success");
-        } else {
-          toast.error(data.message || "Registration failed");
-        }
-      } catch (error) {
+        response.ok ? navigate("/success") : toast.error(data.message || "Registration failed");
+      } catch {
         toast.error("An error occurred during registration");
-        console.error("Registration error:", error);
       }
     }
   };
-
-  const yearOptions = [
-    { value: "1", label: "1st Year" },
-    { value: "2", label: "2nd Year" },
-    { value: "3", label: "3rd Year" },
-    { value: "4", label: "4th Year" },
-    { value: "5", label: "5th Year" },
-  ];
 
   return (
     <ThemeProvider theme={theme}>
       <Box
         sx={{
           minHeight: "100vh",
-          width: "100vw",
+          minWidth: "100vw",
           display: "flex",
           alignItems: "center",
           background: "rgb(13, 32, 48)",
-          overflowX: "hidden", // Prevent horizontal scroll
+          overflowX: "hidden",
         }}
       >
         <Container
@@ -303,142 +233,28 @@ const InfoForm = () => {
                 </Box>
               </Grid>
             )}
-
-            {/* Form Section */}
-            <Grid
-              item
-              xs={12}
-              md={8}
-              sx={{ p: { xs: 1, md: 2 } }} // Adjust padding
-            >
-              <Paper
-                elevation={3}
-                sx={{
-                  p: { xs: 2, sm: 3, md: 4 },
-                  borderRadius: 2,
-                  background: " #F9F9F1",
-                  width: "100%",
-                  maxWidth: "100%",
-                  boxSizing: "border-box",
-                }}
-              >
-                <Typography
-                  variant="h4"
-                  fontWeight="bold"
-                  sx={{
-                    mb: 4,
-                    fontSize: { xs: "1.5rem", sm: "2rem" },
-                  }}
-                >
-                  Registration Form
-                </Typography>
-
+            <Grid item xs={12} md={8} sx={{ margin: "0 auto" }}>
+              <Paper sx={{ p: 4, background: "#F9F9F1", borderRadius: 2 }}>
+                <Typography variant="h4" fontWeight="bold" mb={4}>Registration Form</Typography>
                 <form onSubmit={handleSubmit}>
-                  <Grid container spacing={{ xs: 2, sm: 3 }}>
-                    {/* Name Field */}
-                    <Grid item xs={12} sm={6}>
-                      <TextField
-                        name="name"
-                        label="Full Name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        error={!!errors.name}
-                        helperText={errors.name}
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <Person color="primary" />
-                            </InputAdornment>
-                          ),
-                        }}
-                        sx={textFieldStyles}
-                      />
-                    </Grid>
-
-                    {/* College Name Field */}
-                    <Grid item xs={12} sm={6}>
-                      <TextField
-                        name="collegeName"
-                        label="College Name"
-                        value={formData.collegeName}
-                        onChange={handleChange}
-                        error={!!errors.collegeName}
-                        helperText={errors.collegeName}
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <School color="primary" />
-                            </InputAdornment>
-                          ),
-                        }}
-                        sx={textFieldStyles}
-                      />
-                    </Grid>
-
-                    {/* Email Field */}
-                    {/* Email Field */}
-                    <Grid item xs={12}>
-                      <TextField
-                        name="email"
-                        label="Email Address"
-                        type="email"
-                        fullWidth
-                        value={formData.email}
-                        onChange={handleChange}
-                        error={!!errors.email}
-                        helperText={errors.email}
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <EmailOutlinedIcon color="primary" />
-                            </InputAdornment>
-                          ),
-                        }}
-                        sx={textFieldStyles}
-                      />
-                    </Grid>
-
-                    {/* Phone Field */}
-                    <Grid item xs={12} sm={6}>
-                      <TextField
-                        name="phone"
-                        label="Phone Number"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        error={!!errors.phone}
-                        helperText={errors.phone}
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <Phone color="primary" />
-                            </InputAdornment>
-                          ),
-                        }}
-                        sx={textFieldStyles}
-                      />
-                    </Grid>
-
-                    {/* College ID Field */}
-                    <Grid item xs={12} sm={6}>
-                      <TextField
-                        name="collegeId"
-                        label="College ID"
-                        value={formData.collegeId}
-                        onChange={handleChange}
-                        error={!!errors.collegeId}
-                        helperText={errors.collegeId}
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <Badge color="primary" />
-                            </InputAdornment>
-                          ),
-                        }}
-                        sx={textFieldStyles}
-                      />
-                    </Grid>
-
-                    {/* Year of Study Field */}
+                  <Grid container spacing={3}>
+                    {fields.map(({ name, label, icon, ...props }) => (
+                      <Grid item xs={12} sm={6} key={name}>
+                        <TextField
+                          name={name}
+                          label={label}
+                          value={formData[name] || ""}
+                          onChange={handleChange}
+                          error={!!errors[name]}
+                          helperText={errors[name]}
+                          sx={textFieldStyles}
+                          InputProps={{
+                            startAdornment: <InputAdornment position="start">{icon}</InputAdornment>,
+                          }}
+                          {...props}
+                        />
+                      </Grid>
+                    ))}
                     <Grid item xs={12} sm={6}>
                       <TextField
                         name="yearOfStudy"
@@ -448,125 +264,14 @@ const InfoForm = () => {
                         onChange={handleChange}
                         error={!!errors.yearOfStudy}
                         helperText={errors.yearOfStudy}
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <CalendarToday color="primary" />
-                            </InputAdornment>
-                          ),
-                        }}
-                        sx={textFieldStyles}
                       >
-                        {yearOptions.map((option) => (
-                          <MenuItem key={option.value} value={option.value}>
-                            {option.label}
-                          </MenuItem>
+                        {yearOptions.map((year) => (
+                          <MenuItem key={year} value={year}>{year}</MenuItem>
                         ))}
                       </TextField>
                     </Grid>
-
-                    {/* Username Field */}
-                    <Grid item xs={12} sm={6}>
-                      <TextField
-                        name="username"
-                        label="Username"
-                        value={formData.username}
-                        onChange={handleChange}
-                        error={!!errors.username}
-                        helperText={errors.username}
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <AccountCircle color="primary" />
-                            </InputAdornment>
-                          ),
-                        }}
-                        sx={textFieldStyles}
-                      />
-                    </Grid>
-
-                    {/* Password Field */}
-                    <Grid item xs={12} sm={6}>
-                      <TextField
-                        name="password"
-                        type="password"
-                        label="Password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        error={!!errors.password}
-                        helperText={errors.password}
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <Lock color="primary" />
-                            </InputAdornment>
-                          ),
-                        }}
-                        sx={textFieldStyles}
-                      />
-                    </Grid>
-
-                    {/* Confirm Password Field */}
-                    <Grid item xs={12} sm={6}>
-                      <TextField
-                        name="confirmPassword"
-                        type="password"
-                        label="Confirm Password"
-                        value={formData.confirmPassword}
-                        onChange={handleChange}
-                        error={!!errors.confirmPassword}
-                        helperText={errors.confirmPassword}
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <Lock color="primary" />
-                            </InputAdornment>
-                          ),
-                        }}
-                        sx={textFieldStyles}
-                      />
-                    </Grid>
-
-                    {/* Address Field */}
-                    <Grid item xs={12}>
-                      <TextField
-                        fullWidth
-                        name="address"
-                        label="Address (Optional)"
-                        value={formData.address}
-                        onChange={handleChange}
-                        multiline
-                        rows={2}
-                        InputProps={{
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <Home color="primary" />
-                            </InputAdornment>
-                          ),
-                        }}
-                        sx={textFieldStyles}
-                      />
-                    </Grid>
                   </Grid>
-
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    fullWidth
-                    sx={{
-                      bgcolor: "rgb(222, 82, 43)",
-                      "&:hover": { bgcolor: "#0D1F2D" },
-                      py: 1.5,
-                      mt: 3,
-                      borderRadius: 1.5,
-                      textTransform: "none",
-                      fontSize: { xs: "0.9rem", sm: "1rem" },
-                      boxShadow: "none",
-                    }}
-                    size="large"
-                  >
-                    Register
-                  </Button>
+                  <Button type="submit" variant="contained" fullWidth sx={{ mt: 3, py: 1.5 }}>Register</Button>
                 </form>
               </Paper>
             </Grid>
