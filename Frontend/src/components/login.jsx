@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import {
   Box,
   Card,
@@ -11,7 +12,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
-import { useTheme, useMediaQuery } from "@mui/material"; // Import to handle media queries
+import { useTheme, useMediaQuery } from "@mui/material";
 
 function Login() {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ function Login() {
   const [error, setError] = useState(null);
 
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // Detect if it's mobile
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const handleRegisterClick = () => navigate("/infoform");
 
@@ -61,7 +62,7 @@ function Login() {
     <Box sx={{ height: "100vh", width: "100vw", background: "#0D1F2D", display: "flex", alignItems: "center", justifyContent: "center" }}>
       <Card sx={{ width: "100%", maxWidth: { xs: "90%", sm: "400px", md: "1000px" }, display: "grid", gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, borderRadius: 2, boxShadow: "0 4px 24px rgba(0, 0, 0, 0.15)" }}>
         
-        {/* Left Side - Welcome Section */}
+        {/* Left Side - Welcome Section (Hidden on mobile) */}
         <Box sx={{ p: 6, background: "linear-gradient(to right, rgb(231, 88, 48), rgb(231, 88, 48))", color: "black", display: "flex", flexDirection: "column", justifyContent: "space-between", height: "auto", display: { xs: "none", md: "flex" } }}>
           <Box>
             <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 4 }}>
@@ -75,17 +76,35 @@ function Login() {
         </Box>
 
         {/* Right Side - Sign In Form */}
-        <Box sx={{ p: { xs: 4, sm: 6 }, display: "flex", flexDirection: "column", justifyContent: "center", bgcolor: "white" }}>
+        <Box sx={{ 
+          p: { xs: 4, sm: 6 }, 
+          display: "flex", 
+          flexDirection: "column", 
+          justifyContent: "center",
+          background: { xs: "linear-gradient(to right, rgb(231, 88, 48), rgb(231, 88, 48))", sm: "white" },
+          color: "black"
+        }}>
           <Box color="black" sx={{ width: "100%", maxWidth: "400px", mx: "auto" }}>
+            {/* Mobile Welcome Header */}
             {isMobile && (
-              <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
-                <Box component="img" src="../src/assets/Logo.png" alt="Logo" sx={{ height: "80px", width: "auto" }} />
+              <Box sx={{ 
+                mb: 4,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center"
+              }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
+                  <Box component="img" src="../src/assets/Logo.png" alt="Logo" sx={{ height: "80px", width: "auto" }} />
+                  <Typography variant="h5" sx={{ fontWeight: "800", color: "black" }}>Network Alarm</Typography>
+                </Box>
+                <Typography variant="h6" sx={{ color: "rgba(2, 2, 2, 0.93)", textAlign: "center" }}>
+                  Sign in to continue access
+                </Typography>
               </Box>
             )}
 
-            <Typography variant="h5" sx={{ mb: 4, fontWeight: 600, fontSize: "1.75rem" }}>Sign In</Typography>
+            <Typography variant="h5" sx={{ mb: 4, fontWeight: 600, fontSize: "1.75rem", color: "black" }}>Sign In</Typography>
 
-            {/* Display error message if login fails */}
             {error && (
               <Typography sx={{ color: "red", fontSize: "0.875rem", mb: 2.5 }}>
                 {error}
@@ -133,7 +152,7 @@ function Login() {
                 variant="contained"
                 sx={{
                   bgcolor: "#0D1F2D",
-                  "&:hover": { bgcolor: "rgb(231, 88, 48)" },
+                  "&:hover": { bgcolor: "#1a3346" },
                   py: 1.5,
                   borderRadius: 1.5,
                   textTransform: "none",
@@ -146,7 +165,7 @@ function Login() {
             </Box>
 
             <Box sx={{ mt: 4, textAlign: "center" }}>
-              <Typography sx={{ color: "text.secondary", fontSize: "0.875rem", mb: 2.5 }}>
+              <Typography sx={{ color: "black", fontSize: "0.875rem", mb: 2.5 }}>
                 or Register Now
               </Typography>
 
@@ -157,7 +176,7 @@ function Login() {
                   onClick={handleRegisterClick}
                   sx={{
                     bgcolor: "#0D1F2D",
-                    "&:hover": { bgcolor: "rgb(231, 88, 48)" },
+                    "&:hover": { bgcolor: "#1a3346" },
                     py: 1.5,
                     borderRadius: 1.5,
                     textTransform: "none",

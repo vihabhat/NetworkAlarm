@@ -93,5 +93,75 @@ def login_user():
         cursor.close()
         conn.close()
 
+# Add these routes to your existing Flask app
+
+@app.route('/api/events', methods=['GET'])
+def get_events():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT * FROM events 
+            ORDER BY date DESC, time DESC
+        """)
+        events = cursor.fetchall()
+        
+        # Convert to list of dictionaries
+        events_list = []
+        for event in events:
+            events_list.append({
+                'id': event[0],
+                'title': event[1],
+                'description': event[2],
+                'date': event[3],
+                'time': event[4],
+                'college': event[5],
+                'image': event[6],
+                'likes': event[7],
+                'comments': event[8],
+                'shares': event[9],
+                'verified': event[10]
+            })
+        
+        return jsonify({'events': events_list}), 200
+    except Exception as e:
+        return jsonify({'message': f'An error occurred: {str(e)}'}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
+@app.route('/api/events', methods=['POST'])
+def create_event():
+    data = request.get_json()
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            INSERT INTO events (
+                title, description, date, time, college, 
+                image, likes, comments, shares, verified
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            RETURNING id
+        """, (
+            data['title'], data['description'], data['date'], 
+            data['time'], data['college'], data['image'],
+            data['likes'], data['comments'], data['shares'], 
+            data['verified']
+        ))
+        
+        new_event_id = cursor.fetchone()[0]
+        conn.commit()
+        
+        return jsonify({
+            'message': 'Event created successfully',
+            'event_id': new_event_id
+        }), 201
+    except Exception as e:
+        return jsonify({'message': f'An error occurred: {str(e)}'}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
 if __name__ == "__main__":
     app.run(debug=True)

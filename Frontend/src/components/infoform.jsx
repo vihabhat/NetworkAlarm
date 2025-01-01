@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -136,149 +137,147 @@ const InfoForm = () => {
     }
   };
 
-  return (
-    <ThemeProvider theme={theme}>
-      <Box
-        sx={{
-          minHeight: "100vh",
-          minWidth: "100vw",
-          display: "flex",
-          alignItems: "center",
-          background: "rgb(13, 32, 48)",
-          overflowX: "hidden",
+  const WelcomeSection = ({ isMobile }) => (
+    <Box sx={{ maxWidth: "100vw", overflow: "hidden" }}>
+  <Box sx={{ maxWidth: "100vw", overflow: "hidden" }}>
+    <Box
+      sx={{
+        color: "white",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        p: isMobile ? 1 : { xs: 0, md: 0 },
+        alignItems: isMobile ? "center" : "flex-start",
+        textAlign: isMobile ? "center" : "left",
+        justifyContent: "center",
+      }}
+    >
+      <Box 
+        sx={{ 
+          mb: isMobile ? 3 : 6, 
+          width: "100%", 
+          display: "flex", 
+          flexDirection: "column", 
+          alignItems: isMobile ? "center" : "flex-start" 
         }}
       >
-        <Container
-          maxWidth="lg"
+        <img
+          src={Logo}
+          alt="Logo"
+          style={{
+            height: isMobile ? 80 : 110,
+            width: "auto",
+            maxWidth: "100%",
+          }}
+        />
+        <Typography variant="h5" sx={{ mt: 2 }}>
+          Network Alarm
+        </Typography>
+      </Box>
+
+      <Typography variant="h3" fontWeight="bold" sx={{ mb: 2, fontSize: isMobile ? "2rem" : "3rem" }}>
+        Welcome
+      </Typography>
+      <Typography variant="h6" sx={{ opacity: 0.9, mb: isMobile ? 2 : 0 }}>
+        Please fill in your information to continue
+      </Typography>
+
+      <Typography sx={{ mt: isMobile ? 2 : "auto", opacity: 0.7 }}>
+        www.networkalarm.com
+      </Typography>
+    </Box>
+  </Box>
+ </Box>
+  );
+
+  return (
+    <Box sx={{ maxWidth: "100vw", overflow: "hidden" }}>
+      <ThemeProvider theme={theme}>
+        <Box
           sx={{
-            mx: "auto",
-            width: "100%",
-            px: { xs: 0, sm: 2 }, // Remove extra padding on mobile
+            minHeight: "100vh",
+            width: "100vw",
+            display: "flex",
+            alignItems: "center",
+            background: "rgb(13, 32, 48)",
           }}
         >
-          {/* Logo for mobile screens */}
-          {isSmallScreen && (
-            <Box
-              sx={{
-                width: "100%",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                mb: 3,
-                mt: 2,
-              }}
-            >
-              <img
-                src={Logo}
-                alt="Logo"
-                style={{
-                  height: 80,
-                  width: "auto",
-                  marginBottom: "1rem",
-                }}
-              />
-              <Typography variant="h5" sx={{ color: "white", mb: 2 }}>
-                Network Alarm
-              </Typography>
-            </Box>
-          )}
-
-          <Grid
-            container
-            spacing={{ xs: 2, md: 4 }} // Reduced spacing on mobile
-            sx={{ width: "100%", m: 0 }} // Remove default margin
+          <Container
+            maxWidth="lg"
+            sx={{
+              width: "100%",
+              px: { xs: 1, sm: 2 },
+            }}
           >
-            {/* Logo and Welcome Section for larger screens */}
-            {!isSmallScreen && (
+            <Grid
+              container
+              spacing={2}
+              sx={{ width: "100%", m: 0 }}
+            >
               <Grid
                 item
                 xs={12}
                 md={4}
-                sx={{ p: { xs: 1, md: 2 } }} // Adjust padding
+                sx={{ p: { xs: 1, md: 2 } }}
               >
-                <Box
-                  sx={{
-                    color: "white",
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    p: { xs: 2, md: 4 },
+                <WelcomeSection isMobile={isSmallScreen} />
+              </Grid>
+
+              <Grid item xs={12} md={8}>
+                <Paper 
+                  sx={{ 
+                    p: { xs: 2, sm: 4 }, 
+                    background: "#F9F9F1", 
+                    borderRadius: 2,
+                    mx: "auto",
+                    maxWidth: "100%"
                   }}
                 >
-                  <Box sx={{ mb: 6 }}>
-                    <img
-                      src={Logo}
-                      alt="Logo"
-                      style={{
-                        height: 110,
-                        width: "auto",
-                        maxWidth: "100%",
-                      }}
-                    />
-                    <Typography variant="h5" sx={{ mt: 2 }}>
-                      Network Alarm
-                    </Typography>
-                  </Box>
-
-                  <Typography variant="h3" fontWeight="bold" sx={{ mb: 2 }}>
-                    Welcome
-                  </Typography>
-                  <Typography variant="h6" sx={{ opacity: 0.9 }}>
-                    Please fill in your information to continue
-                  </Typography>
-
-                  <Typography sx={{ mt: "auto", opacity: 0.7 }}>
-                    www.networkalarm.com
-                  </Typography>
-                </Box>
-              </Grid>
-            )}
-            <Grid item xs={12} md={8} sx={{ margin: "0 auto" }}>
-              <Paper sx={{ p: 4, background: "#F9F9F1", borderRadius: 2 }}>
-                <Typography variant="h4" fontWeight="bold" mb={4}>Registration Form</Typography>
-                <form onSubmit={handleSubmit}>
-                  <Grid container spacing={3}>
-                    {fields.map(({ name, label, icon, ...props }) => (
-                      <Grid item xs={12} sm={6} key={name}>
+                  <Typography variant="h4" fontWeight="bold" mb={4}>Registration Form</Typography>
+                  <form onSubmit={handleSubmit}>
+                    <Grid container spacing={3}>
+                      {fields.map(({ name, label, icon, ...props }) => (
+                        <Grid item xs={12} sm={6} key={name}>
+                          <TextField
+                            name={name}
+                            label={label}
+                            value={formData[name] || ""}
+                            onChange={handleChange}
+                            error={!!errors[name]}
+                            helperText={errors[name]}
+                            sx={textFieldStyles}
+                            InputProps={{
+                              startAdornment: <InputAdornment position="start">{icon}</InputAdornment>,
+                            }}
+                            {...props}
+                          />
+                        </Grid>
+                      ))}
+                      <Grid item xs={12} sm={6}>
                         <TextField
-                          name={name}
-                          label={label}
-                          value={formData[name] || ""}
+                          name="yearOfStudy"
+                          select
+                          label="Year of Study"
+                          value={formData.yearOfStudy}
                           onChange={handleChange}
-                          error={!!errors[name]}
-                          helperText={errors[name]}
-                          sx={textFieldStyles}
-                          InputProps={{
-                            startAdornment: <InputAdornment position="start">{icon}</InputAdornment>,
-                          }}
-                          {...props}
-                        />
+                          error={!!errors.yearOfStudy}
+                          helperText={errors.yearOfStudy}
+                        >
+                          {yearOptions.map((year) => (
+                            <MenuItem key={year} value={year}>{year}</MenuItem>
+                          ))}
+                        </TextField>
                       </Grid>
-                    ))}
-                    <Grid item xs={12} sm={6}>
-                      <TextField
-                        name="yearOfStudy"
-                        select
-                        label="Year of Study"
-                        value={formData.yearOfStudy}
-                        onChange={handleChange}
-                        error={!!errors.yearOfStudy}
-                        helperText={errors.yearOfStudy}
-                      >
-                        {yearOptions.map((year) => (
-                          <MenuItem key={year} value={year}>{year}</MenuItem>
-                        ))}
-                      </TextField>
                     </Grid>
-                  </Grid>
-                  <Button type="submit" variant="contained" fullWidth sx={{ mt: 3, py: 1.5 }}>Register</Button>
-                </form>
-              </Paper>
+                    <Button type="submit" variant="contained" fullWidth sx={{ mt: 3, py: 1.5 }}>Register</Button>
+                  </form>
+                </Paper>
+              </Grid>
             </Grid>
-          </Grid>
-        </Container>
-      </Box>
-    </ThemeProvider>
+          </Container>
+        </Box>
+      </ThemeProvider>
+    </Box>
   );
 };
 

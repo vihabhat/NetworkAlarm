@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect  } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Heart, MessageSquare, Share2, Bell, Search, Home, Calendar, Compass, User, Users, Settings, Menu,LogOut, PlusCircle, Check } from 'lucide-react';
 
@@ -257,6 +257,7 @@ const AddEventForm = ({ open, onClose, onSubmit }) => {
   );
 };
 
+
 const NetworkAlarm = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [events, setEvents] = useState(defaultCollegeEvents);
@@ -274,92 +275,92 @@ const NetworkAlarm = () => {
       }
       return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [mobileOpen]);
-    
+
   return (
     <div className="min-h-screen w-screen bg-slate-900">
-      {/* Desktop Sidebar */}
-      <div className="hidden md:flex flex-col fixed h-full w-80 bg-slate-800">
-        {/* Logo Section */}
-        <div className="flex items-center">
-          <div className="w-24 h-24 flex items-center justify-center">
-            <img
-              src="../src/assets/Logo.png"
-              alt="Logo"
-              className="w-24 h-24 object-contain"
+  {/* Desktop Sidebar */}
+  <div className="hidden md:flex flex-col fixed h-full w-80 bg-slate-800">
+    {/* Logo Section */}
+    <div className="flex items-center p-4">
+      <div className="w-32 h-32 flex items-center justify-center">
+        <img
+          src="../src/assets/Logo.png"
+          alt="Logo"
+          className="w-32 h-32 object-contain" // Ensures the logo maintains its aspect ratio
+        />
+      </div>
+      <h1 className="text-xl font-bold text-white ml-4">
+        <span className="text-orange-500">Network</span> Alarm
+      </h1>
+    </div>
+
+    {/* Navigation Items */}
+    <div className="flex flex-col mt-4">
+      {navItems.map((item) => (
+        <button
+          key={item.text}
+          className="flex items-center gap-4 p-4 text-gray-400 bg-slate-800 hover:text-orange-500 hover:bg-slate-700 rounded-lg"
+        >
+          <item.icon size={20} />
+          <span>{item.text}</span>
+        </button>
+      ))}
+    </div>
+  </div>
+
+  {/* Main Content */}
+  <div className="md:ml-80">
+    {/* Header */}
+    <header className="bg-slate-800 sticky top-0 z-50">
+      <div className="flex items-center justify-between p-4">
+        {/* Mobile Menu Toggle */}
+        <button
+          className="md:hidden p-2 text-gray-400 hover:text-orange-500"
+          onClick={() => setMobileOpen(!mobileOpen)}
+        >
+          <Menu size={24} />
+        </button>
+
+        {/* Search and Notifications */}
+        <div className="flex items-center gap-4">
+          <div className="hidden sm:flex items-center gap-2 bg-slate-700 rounded-full px-4 py-2">
+            <input
+              type="text"
+              placeholder="Search events..."
+              className="bg-transparent border-none outline-none text-white placeholder-gray-400"
             />
+            <Search size={20} />
           </div>
-          <h1 className="font-bold text-2xl text-white">
-            <span className="text-orange-500 text-2xl">Network</span> Alarm
-          </h1>
-        </div>
-        {/* Navigation Items */}
-        <div className="flex flex-col mt-4">
-          {navItems.map((item) => (
+          <button className="p-2 bg-slate-800 hover:text-orange-500">
+            <Bell size={20} />
+          </button>
+          <div className="relative">
             <button
-              key={item.text}
-              className="flex items-center gap-4 p-4 text-gray-400 bg-slate-800 hover:text-orange-500 hover:bg-slate-700 rounded-lg"
+              className="p-2 bg-orange-500 rounded-full hover:bg-orange-600"
+              onClick={() => setUserDropdownOpen(!userDropdownOpen)}
             >
-              <item.icon size={20} />
-              <span>{item.text}</span>
+              <User size={20} />
             </button>
-          ))}
+            <UserDropdown isOpen={userDropdownOpen} />
+          </div>
         </div>
       </div>
-      
 
-      {/* Main Content */}
-      <div className="md:ml-80">
-        {/* Header */}
-        <header className="bg-slate-800 sticky top-0 z-50">
-          <div className="flex items-center justify-between p-4">
-            {/* Mobile Menu Toggle */}
-            <button
-              className="md:hidden p-2 text-gray-400 hover:text-orange-500"
-              onClick={() => setMobileOpen(!mobileOpen)}
-            >
-              <Menu size={24} />
-            </button>
-            
+      {/* Mobile Search Bar */}
+      <div className="sm:hidden p-4 border-t border-slate-700">
+        <div className="flex items-center gap-2 bg-slate-700 rounded-full px-4 py-2">
+          <input
+            type="text"
+            placeholder="Search events..."
+            className="bg-transparent border-none outline-none w-full text-white placeholder-gray-400"
+          />
+          <Search size={20} />
+        </div>
+      </div>
+    </header>
 
-            {/* Search and Notifications */}
-            <div className="flex items-center gap-4">
-              <div className="hidden sm:flex items-center gap-2 bg-slate-700 rounded-full px-4 py-2">
-                <input
-                  type="text"
-                  placeholder="Search events..."
-                  className="bg-transparent border-none outline-none text-white placeholder-gray-400"
-                />
-                <Search size={20} />
-              </div>
-              <button className="p-2 bg-slate-800 hover:text-orange-500">
-                <Bell size={20} />
-              </button>
-              <div className="relative">
-                <button
-                  className="p-2 bg-orange-500 rounded-full hover:bg-orange-600"
-                  onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                >
-                  <User size={20} />
-                </button>
-                <UserDropdown isOpen={userDropdownOpen} />
-              </div>
-            </div>
-          </div>
-          {/* Mobile Search Bar */}
-                <div className="sm:hidden p-4 border-t border-slate-700">
-                  <div className="flex items-center gap-2 bg-slate-700 rounded-full px-4 py-2">
-                    <input
-                      type="text"
-                      placeholder="Search events..."
-                      className="bg-transparent border-none outline-none w-full text-white placeholder-gray-400"
-                    />
-                    <Search size={20} />
-                  </div>
-                </div>
-        </header>
-
-        {/* Main Content Area */}
-        <main className="p-4 md:p-6 max-w-7xl mx-auto">
+    {/* Main Content Area */}
+    <main className="p-4 md:p-6 max-w-7xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-white">Events</h2>
         <button
@@ -387,11 +388,10 @@ const NetworkAlarm = () => {
           <EventCard key={event.id} event={event} />
         ))}
       </div>
-
-      {/* Add Event Form */}
-      <AddEventForm open={addEventOpen} onClose={() => setAddEventOpen(false)} onSubmit={(newEvent) => setEvents([...events, newEvent])} />
     </main>
-      {/* Mobile Sidebar */}
+  </div>
+
+  {/* Mobile Sidebar */}
       {mobileOpen && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-50 md:hidden">
           <div ref={sidebarRef} className="w-64 h-full bg-slate-800 p-4">
@@ -418,14 +418,13 @@ const NetworkAlarm = () => {
           </div>
         </div>
       )}
-
-      {/* Bottom Navbar */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 md:hidden">
+        {/* Bottom Navbar */}
+        <nav className="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 md:hidden">
         <div className="flex justify-around p-4">
           {navItems.slice(0, 4).map((item) => (
             <button
               key={item.text}
-              className="flex flex-col items-center gap-1 text-gray-400 hover:text-orange-500"
+              className="flex flex-col items-center gap-1 bg-slate-800 text-gray-400 hover:text-orange-500"
             >
               <item.icon size={20} />
               <span className="text-xs">{item.text}</span>
@@ -433,8 +432,14 @@ const NetworkAlarm = () => {
           ))}
         </div>
       </nav>
-    </div>
-    </div>
+  {/* Add Event Dialog */}
+  <AddEventForm
+        open={addEventOpen}
+        onClose={() => setAddEventOpen(false)}
+        onSubmit={(newEvent) => setEvents([{ id: events.length + 1, ...newEvent }, ...events])}
+      />
+</div>
+      
   );
 };
 
