@@ -8,13 +8,17 @@ CORS(app, origins=["http://localhost:5173"])  # Allowing only your frontend's or
 
 # Database connection
 def get_db_connection():
-    conn = psycopg2.connect(
-        host="localhost",
-        database="NetworkAlarmDB",
-        user="postgres",
-        password="postgres"
-    )
-    return conn
+    try:
+        conn = psycopg2.connect(
+            host="localhost",
+            database="NetworkAlarmDB",
+            user="postgres",
+            password="postgres",
+        )
+        return conn
+    except Exception as e:
+        print(f"Database connection error: {str(e)}")
+        raise
 
 # User registration route
 @app.route('/api/logins', methods=['POST'])
@@ -97,66 +101,140 @@ def login_user():
 
 @app.route('/api/events', methods=['GET'])
 def get_events():
+    conn = None
+    cursor = None
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
+        
+        # Get all events
         cursor.execute("""
-            SELECT * FROM events 
-            ORDER BY date DESC, time DESC
+            SELECT id, title, description, 
+                   date::text, time::text, college, 
+                   image, likes, comments, shares, verified 
+            FROM events 
+            ORDER BY date DESC, time DESC;
         """)
-        events = cursor.fetchall()
         
-        # Convert to list of dictionaries
-        events_list = []
-        for event in events:
-            events_list.append({
-                'id': event[0],
-                'title': event[1],
-                'description': event[2],
-                'date': event[3],
-                'time': event[4],
-                'college': event[5],
-                'image': event[6],
-                'likes': event[7],
-                'comments': event[8],
-                'shares': event[9],
-                'verified': event[10]
-            })
+        columns = [desc[0] for desc in cursor.description]
+        events = []
+        for row in cursor.fetchall():
+            events.append(dict(zip(columns, row)))
         
-        return jsonify({'events': events_list}), 200
+        return jsonify({'events': events}), 200
+        
     except Exception as e:
-        return jsonify({'message': f'An error occurred: {str(e)}'}), 500
+        print(f"Error in get_events: {str(e)}")
+        return jsonify({
+            'message': 'Internal server error', 
+            'error': str(e)
+        }), 500
     finally:
-        cursor.close()
-        conn.close()
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
 
 @app.route('/api/events', methods=['POST'])
 def create_event():
-    data = request.get_json()
-    
     try:
+        data = request.get_json()
+        
+        # Validate required fields
+        required_fields = ['title', 'description', 'date', 'time', 'college', 'image']
+        missing_fields = [field for field in required_fields if not data.get(field)]
+        
+        if missing_fields:
+            return jsonify({
+                'message': 'Missing required fields',
+                'fields': missing_fields
+            }), 400
+
+        # Get user email from request headers or token
+        user_email = request.headers.get('X-User-Email')
+        if not user_email:
+            return jsonify({'message': 'User authentication required'}), 401
+
         conn = get_db_connection()
         cursor = conn.cursor()
+        
+        # First verify if the user exists and get their college
+        cursor.execute("SELECT college_name FROM users WHERE email = %s", (user_email,))
+        user_data = cursor.fetchone()
+        
+        if not user_data:
+            return jsonify({'message': 'User not found'}), 404
+
+        # Insert the event with verified status based on user's college
+        is_verified = data['college'] == user_data[0]  # Auto-verify if user's college matches
+        
         cursor.execute("""
             INSERT INTO events (
                 title, description, date, time, college, 
-                image, likes, comments, shares, verified
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            RETURNING id
+                image, likes, comments, shares, verified,
+                created_by
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            RETURNING id, title, description, date::text, time::text, 
+                      college, image, likes, comments, shares, verified
         """, (
             data['title'], data['description'], data['date'], 
             data['time'], data['college'], data['image'],
-            data['likes'], data['comments'], data['shares'], 
-            data['verified']
+            0, 0, 0, is_verified, user_email
         ))
         
-        new_event_id = cursor.fetchone()[0]
+        new_event = dict(zip([
+            'id', 'title', 'description', 'date', 'time', 
+            'college', 'image', 'likes', 'comments', 'shares', 'verified'
+        ], cursor.fetchone()))
+        
         conn.commit()
         
         return jsonify({
             'message': 'Event created successfully',
-            'event_id': new_event_id
+            'event': new_event
         }), 201
+        
+    except psycopg2.Error as e:
+        conn.rollback()
+        return jsonify({
+            'message': 'Database error',
+            'error': str(e)
+        }), 500
+    except Exception as e:
+        return jsonify({
+            'message': 'Internal server error',
+            'error': str(e)
+        }), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+@app.route('/api/user/<email>', methods=['GET'])
+def get_user(email):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            SELECT name, email, college_name, college_id 
+            FROM users 
+            WHERE email = %s
+        """, (email,))
+        
+        user = cursor.fetchone()
+        
+        if user:
+            user_data = {
+                'name': user[0],
+                'email': user[1],
+                'college_name': user[2],
+                'college_id': user[3]
+            }
+            return jsonify(user_data), 200
+        else:
+            return jsonify({'message': 'User not found'}), 404
+            
     except Exception as e:
         return jsonify({'message': f'An error occurred: {str(e)}'}), 500
     finally:

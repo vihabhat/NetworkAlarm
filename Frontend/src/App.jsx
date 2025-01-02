@@ -1,42 +1,44 @@
 /* eslint-disable no-unused-vars */
-import 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Login from '../src/components/login.jsx';
-import InfoForm from '../src/components/infoform.jsx';
-import Home from '../src/components/home.jsx';
-import SuccessPage from '../src/components/successpage.jsx';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import React, { Suspense, lazy } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 
+// Lazy Loading Components
+const Login = lazy(() => import("../src/components/login.jsx"));
+const InfoForm = lazy(() => import("../src/components/infoform.jsx"));
+const Home = lazy(() => import("../src/components/home.jsx"));
+const SuccessPage = lazy(() => import("../src/components/successpage.jsx"));
 
-const App = () => {
-  return (
-    <Router>
-      <Routes>
-        {/* Route for the login page */}
-        <Route path="/" element={<Login />} />
-        
-        {/* Add more routes as your app grows */}
-        
-        <Route path="/infoform" element={<InfoForm/>} />
-        <Route path="/success" element={<SuccessPage />} />
-        <Route path="/home" element={<Home/>} />
-        
-        <Route path="/settings" element={<div>Settings Page</div>} />
-      </Routes>
-    </Router>
-  );
-};
+// Theme Configuration
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#7e57c2',
+      main: "#7e57c2",
     },
     secondary: {
-      main: '#3f51b5',
+      main: "#3f51b5",
     },
   },
 });
 
-
+const App = () => {
+  return (
+    <ThemeProvider theme={theme}>
+      <Router>
+        <Suspense fallback={<div>Loading...</div>}>
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/infoform" element={<InfoForm />} />
+            <Route path="/success" element={<SuccessPage />} />
+            <Route path="/home" element={<Home />} />
+            <Route path="/settings" element={<div>Settings Page</div>} />
+            {/* 404 Route */}
+            <Route path="*" element={<div>404 - Page Not Found</div>} />
+          </Routes>
+        </Suspense>
+      </Router>
+    </ThemeProvider>
+  );
+};
 
 export default App;

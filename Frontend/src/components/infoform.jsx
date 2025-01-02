@@ -106,10 +106,31 @@ const InfoForm = () => {
   const validateForm = () => {
     const newErrors = {};
     Object.keys(formData).forEach((field) => {
-      if (!formData[field] && field !== "address") newErrors[field] = "This field is required";
+      if (!formData[field] && field !== "address") {
+        newErrors[field] = "This field is required";
+      }
     });
-    if (formData.phone && !/^\d{10}$/.test(formData.phone)) newErrors.phone = "Invalid phone number";
-    if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = "Passwords do not match";
+
+    // Validate phone number
+    if (formData.phone && !/^\d{10}$/.test(formData.phone)) {
+      newErrors.phone = "Invalid phone number";
+    }
+
+    // Validate email format
+    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Invalid email address";
+    }
+
+    // Validate password
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+
+    // Ensure password strength
+    if (formData.password && formData.password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -130,8 +151,13 @@ const InfoForm = () => {
           body: JSON.stringify(formData),
         });
         const data = await response.json();
-        response.ok ? navigate("/success") : toast.error(data.message || "Registration failed");
-      } catch {
+
+        if (response.ok) {
+          navigate("/success");
+        } else {
+          toast.error(data.message || "Registration failed");
+        }
+      } catch (error) {
         toast.error("An error occurred during registration");
       }
     }
