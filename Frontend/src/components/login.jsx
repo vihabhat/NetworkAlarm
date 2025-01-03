@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import {
   Box,
   Card,
@@ -28,13 +27,18 @@ function Login() {
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data, status } = await axios.post("http://127.0.0.1:5000/api/logins/login", { email, password });
-      if (status === 200) {
-        localStorage.setItem("authToken", data.token);
+      const response = await axios.post("http://127.0.0.1:5000/api/logins/login", { email, password });
+      
+      if (response.status === 200) {
+        // Store user data and email in localStorage
+        localStorage.setItem('userEmail', email);
+        localStorage.setItem('userData', JSON.stringify(response.data.user));
+        
+        // Navigate to home page
         navigate("/home");
       }
     } catch (err) {
-      setError("Invalid email or password");
+      setError(err.response?.data?.message || "Invalid email or password");
     }
   };
 
@@ -106,7 +110,15 @@ function Login() {
             <Typography variant="h5" sx={{ mb: 4, fontWeight: 600, fontSize: "1.75rem", color: "black" }}>Sign In</Typography>
 
             {error && (
-              <Typography sx={{ color: "red", fontSize: "0.875rem", mb: 2.5 }}>
+              <Typography sx={{ 
+                color: "error.main", 
+                fontSize: "0.875rem", 
+                mb: 2.5,
+                p: 1.5,
+                bgcolor: "error.light",
+                borderRadius: 1,
+                textAlign: "center"
+              }}>
                 {error}
               </Typography>
             )}

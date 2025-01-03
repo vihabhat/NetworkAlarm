@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, redirect, url_for
 from flask_cors import CORS
 import psycopg2
+from datetime import datetime
 
 # Initialize Flask app and configure CORS
 app = Flask(__name__)
@@ -61,30 +62,71 @@ def register_user():
         return jsonify({"message": f"An error occurred: {str(e)}"}), 500
 
 # User login route (for later use)
+@app.route('/api/users/<email>', methods=['GET'])
+def get_user(email):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            SELECT name, email, college_name, college_id, username
+            FROM users
+            WHERE email = %s
+        """, (email,))
+        
+        user = cursor.fetchone()
+        
+        if user:
+            user_data = {
+                'name': user[0],
+                'email': user[1],
+                'college_name': user[2],
+                'college_id': user[3],
+                'username': user[4]
+            }
+            return jsonify(user_data), 200
+        else:
+            return jsonify({'message': 'User not found'}), 404
+            
+    except Exception as e:
+        return jsonify({'message': f'An error occurred: {str(e)}'}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
+# Modified login route to return user data
 @app.route('/api/logins/login', methods=['POST'])
 def login_user():
     data = request.get_json()
-
     email = data.get("email")
     password = data.get("password")
 
     if not email or not password:
-        return jsonify({"message": "Username and password are required"}), 400
+        return jsonify({"message": "Email and password are required"}), 400
 
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
 
-        # Check if the user exists in the database
         cursor.execute("""
-            SELECT * FROM users WHERE email = %s AND password = %s
+            SELECT name, email, college_name, college_id, username
+            FROM users
+            WHERE email = %s AND password = %s
         """, (email, password))
 
         user = cursor.fetchone()
 
         if user:
-            # Redirect to the home page
-            return redirect("http://localhost:5173/home")
+            return jsonify({
+                "message": "Login successful",
+                "user": {
+                    "name": user[0],
+                    "email": user[1],
+                    "college_name": user[2],
+                    "college_id": user[3],
+                    "username": user[4]
+                }
+            }), 200
         else:
             return jsonify({"message": "Invalid credentials"}), 401
     except Exception as e:
@@ -93,28 +135,28 @@ def login_user():
         cursor.close()
         conn.close()
 
-# Add these routes to your existing Flask app
-
+# Modified events routes
 @app.route('/api/events', methods=['GET'])
 def get_events():
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute("""
-            SELECT * FROM events 
+            SELECT id, title, description, date, time, college, 
+                   image, likes, comments, shares, verified
+            FROM events 
             ORDER BY date DESC, time DESC
         """)
         events = cursor.fetchall()
         
-        # Convert to list of dictionaries
         events_list = []
         for event in events:
             events_list.append({
                 'id': event[0],
                 'title': event[1],
                 'description': event[2],
-                'date': event[3],
-                'time': event[4],
+                'date': event[3].strftime('%Y-%m-%d'),
+                'time': event[4].strftime('%H:%M'),
                 'college': event[5],
                 'image': event[6],
                 'likes': event[7],
@@ -137,6 +179,11 @@ def create_event():
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
+        
+        # Convert string date and time to proper PostgreSQL format
+        date = datetime.strptime(data['date'], '%Y-%m-%d').date()
+        time = datetime.strptime(data['time'], '%H:%M').time()
+        
         cursor.execute("""
             INSERT INTO events (
                 title, description, date, time, college, 
@@ -144,10 +191,9 @@ def create_event():
             ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id
         """, (
-            data['title'], data['description'], data['date'], 
-            data['time'], data['college'], data['image'],
-            data['likes'], data['comments'], data['shares'], 
-            data['verified']
+            data['title'], data['description'], date, 
+            time, data['college'], data.get('image', '/api/placeholder/600/300'),
+            0, 0, 0, True
         ))
         
         new_event_id = cursor.fetchone()[0]
