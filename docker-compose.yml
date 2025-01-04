@@ -1,4 +1,4 @@
-version: '3.8'
+# version: '3.8'
 
 services:
   postgres:
@@ -25,7 +25,7 @@ services:
     # Volume mappings
     volumes:
       # Specific host path volume mapping as requested
-      - /home/rubbershredder/dataStore/postgres/data:/var/lib/postgresql/data
+      - C:\viha\datastore:/var/lib/postgresql/data
       
       # Optional: Custom initialization scripts
       # - ./init-scripts:/docker-entrypoint-initdb.d
