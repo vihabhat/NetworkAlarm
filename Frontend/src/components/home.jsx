@@ -32,7 +32,7 @@ const defaultCollegeEvents = [
     likes: 24,
     comments: 5,
     shares: 2,
-    image: "/api/placeholder/600/300",
+    // image: "/api/placeholder/600/300",
     location: "Main Auditorium",
     fullDescription:
       "A comprehensive day of technology discussions, workshops, and networking opportunities with industry leaders. Perfect for students and professionals alike.",
@@ -71,8 +71,8 @@ const upcomingEvents = [
 const navItems = [
   { text: "Home", icon: Home },
   { text: "Events", icon: Calendar },
-  { text: "Explore", icon: Compass },
-  { text: "Community", icon: Users },
+  // { text: "Explore", icon: Compass },
+  // { text: "Community", icon: Users },
   { text: "Settings", icon: Settings },
 ];
 
@@ -116,13 +116,13 @@ const EventCard = ({ event }) => {
       onClick={() => navigate(`/events/${event.id}`)}
       className="bg-slate-800 rounded-2xl overflow-hidden cursor-pointer transition-transform duration-200 hover:scale-105"
     >
-      <div className="relative h-48">
+      {/* <div className="relative h-48">
         <img
-          src={event.image}
+          // src={event.image}
           alt={event.title}
           className="w-full h-full object-cover"
         />
-      </div>
+      </div> */}
       <div className="p-6">
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center gap-4">
@@ -243,7 +243,7 @@ const AddEventForm = ({ open, onClose, onSubmit }) => {
     date: "",
     time: "",
     college: "",
-    image: "/api/placeholder/600/300",
+    // image: "/api/placeholder/600/300",
   });
 
   if (!open) return null;
@@ -263,7 +263,7 @@ const AddEventForm = ({ open, onClose, onSubmit }) => {
       date: "",
       time: "",
       college: "",
-      image: "/api/placeholder/600/300",
+      // image: "/api/placeholder/600/300",
     });
     onClose();
   };
@@ -399,8 +399,8 @@ const NetworkAlarm = () => {
           className="w-full h-full object-contain"
         />
       </div>
-      <h1 className="font-bold text-lg sm:text-xl text-white ml-2">
-        <span className="text-orange-500">Network</span> Alarm
+      <h1 className="font-bold text-lg sm:text-xl text-white ml-2 whitespace-nowrap">
+        Network Alarm
       </h1>
     </div>
   );
@@ -408,23 +408,22 @@ const NetworkAlarm = () => {
   return (
     <div className="min-h-screen w-screen bg-slate-900 overflow-x-hidden">
       {/* Desktop Sidebar - Only visible on large screens */}
-      {/* Desktop Sidebar */}
       <div className="hidden lg:flex flex-col fixed h-full w-80 bg-slate-800">
-        <div className="p-6">
-          <LogoSection />
-        </div>
-        <div className="flex flex-col mt-4">
-          {navItems.map((item) => (
-            <button
-              key={item.text}
-              className="flex items-center gap-4 p-4 bg-slate-800 text-gray-400 hover:text-orange-500 hover:bg-slate-700 transition-colors"
-            >
-              <item.icon size={20} />
-              <span>{item.text}</span>
-            </button>
-          ))}
-        </div>
-      </div>
+  <div className="p-6">
+    <LogoSection />
+  </div>
+  <div className="flex flex-col mt-4">
+    {navItems.map((item) => (
+      <button
+        key={item.text}
+        className="flex items-center gap-4 p-4 bg-slate-800 text-gray-400 hover:text-orange-500 hover:bg-slate-700 transition-colors"
+      >
+        <item.icon size={20} />
+        <span className="whitespace-nowrap">{item.text}</span>
+      </button>
+    ))}
+  </div>
+</div>
 
       {/* Main Content */}
       <div className="lg:ml-80">
@@ -491,7 +490,7 @@ const NetworkAlarm = () => {
           <div className="fixed inset-0 z-50 bg-black bg-opacity-50 md:block lg:hidden">
             <div 
               ref={sidebarRef}
-              className="w-64 h-full bg-slate-800 transform transition-transform duration-300 ease-in-out"
+              className="w-screen h-full bg-slate-800 transform transition-transform duration-300 ease-in-out"
             >
               <div className="flex items-center justify-between p-6">
                 <LogoSection />

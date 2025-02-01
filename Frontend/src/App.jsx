@@ -5,6 +5,7 @@ import Login from '../src/components/login.jsx';
 import InfoForm from '../src/components/infoform.jsx';
 import Home from '../src/components/home.jsx';
 import SuccessPage from '../src/components/successpage.jsx';
+import CollegePage from '../src/components/collegepage.jsx';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 
@@ -20,7 +21,7 @@ const App = () => {
         <Route path="/infoform" element={<InfoForm/>} />
         <Route path="/success" element={<SuccessPage />} />
         <Route path="/home" element={<Home/>} />
-        
+        <Route path='/collegepage' element={<CollegePage/>} />
         <Route path="/settings" element={<div>Settings Page</div>} />
       </Routes>
     </Router>

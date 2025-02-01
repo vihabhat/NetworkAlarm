@@ -35,7 +35,7 @@ function Login() {
         localStorage.setItem('userData', JSON.stringify(response.data.user));
         
         // Navigate to home page
-        navigate("/home");
+        navigate("/collegepage");
       }
     } catch (err) {
       setError(err.response?.data?.message || "Invalid email or password");
