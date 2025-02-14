@@ -32,7 +32,6 @@ const defaultCollegeEvents = [
     likes: 24,
     comments: 5,
     shares: 2,
-    // image: "/api/placeholder/600/300",
     location: "Main Auditorium",
     fullDescription:
       "A comprehensive day of technology discussions, workshops, and networking opportunities with industry leaders. Perfect for students and professionals alike.",
@@ -46,12 +45,6 @@ const defaultCollegeEvents = [
     ],
   },
 ];
-const userData = {
-  name: "John Doe",
-  email: "john@example.com",
-  role: "Student",
-  college: "MIT College",
-};
 
 const upcomingEvents = [
   {
@@ -71,10 +64,63 @@ const upcomingEvents = [
 const navItems = [
   { text: "Home", icon: Home },
   { text: "Events", icon: Calendar },
-  // { text: "Explore", icon: Compass },
-  // { text: "Community", icon: Users },
   { text: "Settings", icon: Settings },
 ];
+
+const CalendarWidget = ({ events }) => {
+  const today = new Date();
+  const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+  const daysInMonth = lastDayOfMonth.getDate();
+  const startingDay = firstDayOfMonth.getDay();
+
+  // Convert event dates to day numbers for highlighting
+  const eventDays = events.map(event => new Date(event.date).getDate());
+
+  // Generate calendar days
+  const days = [];
+  for (let i = 0; i < startingDay; i++) {
+    days.push(null);
+  }
+  for (let i = 1; i <= daysInMonth; i++) {
+    days.push(i);
+  }
+
+  return (
+    <div className="bg-slate-800 rounded-lg p-4 w-full">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-semibold flex items-center gap-2">
+          <Calendar size={20} className="text-orange-500" />
+          {today.toLocaleString('default', { month: 'long' })} {today.getFullYear()}
+        </h3>
+      </div>
+      
+      <div className="grid grid-cols-7 gap-1 text-center mb-2">
+        {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(day => (
+          <div key={day} className="text-sm text-gray-400">
+            {day}
+          </div>
+        ))}
+      </div>
+      
+      <div className="grid grid-cols-7 gap-1">
+        {days.map((day, index) => (
+          <div
+            key={index}
+            className={`
+              aspect-square flex items-center justify-center rounded-full text-sm
+              ${day === null ? 'invisible' : ''}
+              ${day === today.getDate() ? 'bg-orange-500 text-white' : ''}
+              ${eventDays.includes(day) && day !== today.getDate() ? 'bg-orange-500/20 text-orange-500' : ''}
+            `}
+          >
+            {day}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 const SocialAction = ({ icon: Icon, count, isActive, onClick }) => (
   <button
@@ -116,13 +162,6 @@ const EventCard = ({ event }) => {
       onClick={() => navigate(`/events/${event.id}`)}
       className="bg-slate-800 rounded-2xl overflow-hidden cursor-pointer transition-transform duration-200 hover:scale-105"
     >
-      {/* <div className="relative h-48">
-        <img
-          // src={event.image}
-          alt={event.title}
-          className="w-full h-full object-cover"
-        />
-      </div> */}
       <div className="p-6">
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center gap-4">
@@ -171,7 +210,7 @@ const UserDropdown = ({ isOpen }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const email = localStorage.getItem("userEmail"); // Store email during login
+        const email = localStorage.getItem("userEmail");
         if (!email) return;
 
         const response = await fetch(
@@ -225,7 +264,7 @@ const UpcomingEventCard = ({ event }) => {
 
   return (
     <div
-      onClick={() => navigate(`/events/${event.id}`)}
+      onClick={() => navigate('/events')}
       className="bg-slate-800 p-4 rounded-lg cursor-pointer hover:bg-slate-700 transition-colors duration-200"
     >
       <h4 className="font-semibold">{event.title}</h4>
@@ -237,13 +276,13 @@ const UpcomingEventCard = ({ event }) => {
 };
 
 const AddEventForm = ({ open, onClose, onSubmit }) => {
+  const navigate = useNavigate();
   const [eventData, setEventData] = useState({
     title: "",
     description: "",
     date: "",
     time: "",
     college: "",
-    // image: "/api/placeholder/600/300",
   });
 
   if (!open) return null;
@@ -263,81 +302,86 @@ const AddEventForm = ({ open, onClose, onSubmit }) => {
       date: "",
       time: "",
       college: "",
-      // image: "/api/placeholder/600/300",
     });
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-      <div className="bg-slate-800 rounded-lg w-full max-w-md">
-        <div className="p-6">
-          <h2 className="text-2xl font-bold mb-4">Create New Event</h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <input
-              type="text"
-              placeholder="Event Title"
-              className="w-full p-2 rounded bg-slate-700"
-              value={eventData.title}
-              onChange={(e) =>
-                setEventData({ ...eventData, title: e.target.value })
-              }
-            />
-            <textarea
-              placeholder="Description"
-              rows="3"
-              className="w-full p-2 rounded bg-slate-700"
-              value={eventData.description}
-              onChange={(e) =>
-                setEventData({ ...eventData, description: e.target.value })
-              }
-            />
-            <input
-              type="text"
-              placeholder="College Name"
-              className="w-full p-2 rounded bg-slate-700"
-              value={eventData.college}
-              onChange={(e) =>
-                setEventData({ ...eventData, college: e.target.value })
-              }
-            />
-            <div className="grid grid-cols-2 gap-4">
+    <>
+      <div
+        onClick={() => navigate('/events')}
+        className="bg-slate-800 rounded-xl p-6 cursor-pointer hover:bg-slate-700 transition-all duration-200"
+      ></div>
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+        <div className="bg-slate-800 rounded-lg w-full max-w-md">
+          <div className="p-6">
+            <h2 className="text-2xl font-bold mb-4">Create New Event</h2>
+            <form onSubmit={handleSubmit} className="space-y-4">
               <input
-                type="date"
-                className="p-2 rounded bg-slate-700"
-                value={eventData.date}
+                type="text"
+                placeholder="Event Title"
+                className="w-full p-2 rounded bg-slate-700"
+                value={eventData.title}
                 onChange={(e) =>
-                  setEventData({ ...eventData, date: e.target.value })
+                  setEventData({ ...eventData, title: e.target.value })
+                }
+              />
+              <textarea
+                placeholder="Description"
+                rows="3"
+                className="w-full p-2 rounded bg-slate-700"
+                value={eventData.description}
+                onChange={(e) =>
+                  setEventData({ ...eventData, description: e.target.value })
                 }
               />
               <input
-                type="time"
-                className="p-2 rounded bg-slate-700"
-                value={eventData.time}
+                type="text"
+                placeholder="College Name"
+                className="w-full p-2 rounded bg-slate-700"
+                value={eventData.college}
                 onChange={(e) =>
-                  setEventData({ ...eventData, time: e.target.value })
+                  setEventData({ ...eventData, college: e.target.value })
                 }
               />
-            </div>
-            <div className="flex justify-end gap-4">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-4 py-2 rounded text-gray-400 hover:text-white"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-2 bg-orange-500 rounded text-white hover:bg-orange-600"
-              >
-                Create Event
-              </button>
-            </div>
-          </form>
+              <div className="grid grid-cols-2 gap-4">
+                <input
+                  type="date"
+                  className="p-2 rounded bg-slate-700"
+                  value={eventData.date}
+                  onChange={(e) =>
+                    setEventData({ ...eventData, date: e.target.value })
+                  }
+                />
+                <input
+                  type="time"
+                  className="p-2 rounded bg-slate-700"
+                  value={eventData.time}
+                  onChange={(e) =>
+                    setEventData({ ...eventData, time: e.target.value })
+                  }
+                />
+              </div>
+              <div className="flex justify-end gap-4">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="px-4 py-2 rounded text-gray-400 hover:text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-orange-500 rounded text-white hover:bg-orange-600"
+                >
+                  Create Event
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
@@ -360,9 +404,11 @@ const NetworkAlarm = () => {
     }
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [mobileOpen]);
+
   useEffect(() => {
     fetchEvents();
   }, []);
+
   const fetchEvents = async () => {
     try {
       const response = await fetch("http://localhost:5000/api/events");
@@ -372,6 +418,7 @@ const NetworkAlarm = () => {
       console.error("Error fetching events:", error);
     }
   };
+
   const handleAddEvent = async (eventData) => {
     try {
       const response = await fetch("http://localhost:5000/api/events", {
@@ -383,13 +430,16 @@ const NetworkAlarm = () => {
       });
 
       if (response.ok) {
-        fetchEvents(); // Refresh events list
+        const newEvent = await response.json();
+        fetchEvents();
         setAddEventOpen(false);
+        navigate('/events'); // Navigate to the newly created event
       }
     } catch (error) {
       console.error("Error creating event:", error);
     }
   };
+
   const LogoSection = () => (
     <div className="flex items-center">
       <div className="w-10 h-10 sm:w-12 sm:h-12">
@@ -405,48 +455,45 @@ const NetworkAlarm = () => {
     </div>
   );
 
+
   return (
+    
     <div className="min-h-screen w-screen bg-slate-900 overflow-x-hidden">
-      {/* Desktop Sidebar - Only visible on large screens */}
+      {/* Desktop Sidebar */}
       <div className="hidden lg:flex flex-col fixed h-full w-80 bg-slate-800">
-  <div className="p-6">
-    <LogoSection />
-  </div>
-  <div className="flex flex-col mt-4">
-    {navItems.map((item) => (
-      <button
-        key={item.text}
-        className="flex items-center gap-4 p-4 bg-slate-800 text-gray-400 hover:text-orange-500 hover:bg-slate-700 transition-colors"
-      >
-        <item.icon size={20} />
-        <span className="whitespace-nowrap">{item.text}</span>
-      </button>
-    ))}
-  </div>
-</div>
+        <div className="p-6">
+          <LogoSection />
+        </div>
+        <div className="flex flex-col mt-4">
+          {navItems.map((item) => (
+            <button
+              key={item.text}
+              className="flex items-center gap-4 p-4 bg-slate-800 text-gray-400 hover:text-orange-500 hover:bg-slate-700 transition-colors"
+            >
+              <item.icon size={20} />
+              <span className="whitespace-nowrap">{item.text}</span>
+            </button>
+          ))}
+        </div>
+      </div>
 
       {/* Main Content */}
       <div className="lg:ml-80">
         {/* Header */}
         <header className="bg-slate-800 sticky top-0 z-40">
           <div className="flex items-center justify-between p-4">
-            {/* Left section with hamburger and logo */}
             <div className="flex items-center gap-4">
-              {/* Hamburger Menu - Only visible on tablet */}
               <button
                 className="hidden md:block lg:hidden p-2 bg-slate-800 text-gray-400 hover:text-orange-500"
                 onClick={() => setSidebarOpen(!sidebarOpen)}
               >
                 <Menu size={24} />
               </button>
-              
-              {/* Logo - Visible on mobile and tablet */}
               <div className="lg:hidden">
                 <LogoSection />
               </div>
             </div>
 
-            {/* Search, Notifications, and User Section */}
             <div className="flex items-center gap-4">
               <div className="hidden sm:flex items-center gap-2 bg-slate-700 rounded-full px-4 py-2">
                 <input
@@ -471,7 +518,6 @@ const NetworkAlarm = () => {
             </div>
           </div>
 
-          {/* Mobile Search Bar */}
           <div className="sm:hidden p-4 border-t border-slate-700">
             <div className="flex items-center gap-2 bg-slate-700 rounded-full px-4 py-2">
               <input
@@ -483,36 +529,6 @@ const NetworkAlarm = () => {
             </div>
           </div>
         </header>
-
-
-        {/* Tablet Sidebar */}
-        {sidebarOpen && (
-          <div className="fixed inset-0 z-50 bg-black bg-opacity-50 md:block lg:hidden">
-            <div 
-              ref={sidebarRef}
-              className="w-screen h-full bg-slate-800 transform transition-transform duration-300 ease-in-out"
-            >
-              <div className="flex items-center justify-between p-6">
-                <LogoSection />
-                <button 
-                  onClick={() => setSidebarOpen(false)}
-                  className="text-gray-400 hover:text-orange-500"
-                >
-                  <X size={24} />
-                </button>
-              </div>
-              {navItems.map((item) => (
-                <button
-                  key={item.text}
-                  className="flex items-center gap-4 p-4 w-full bg-slate-800 text-gray-400 hover:text-orange-500 hover:bg-slate-700"
-                >
-                  <item.icon size={20} />
-                  <span>{item.text}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
 
         {/* Main Content Area */}
         <main className="p-4 md:p-6 max-w-7xl mx-auto pb-24 md:pb-6">
@@ -527,23 +543,34 @@ const NetworkAlarm = () => {
             </button>
           </div>
 
-          {/* Upcoming Events Section */}
-          <div className="mb-8">
-            <h3 className="text-xl font-bold text-white mb-4">
-              Upcoming Events
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {upcomingEvents.map((event) => (
-                <UpcomingEventCard key={event.id} event={event} />
-              ))}
-            </div>
-          </div>
+          {/* Grid Layout for Main Content and Calendar */}
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            {/* Main Content Column */}
+            <div className="lg:col-span-3">
+              {/* Upcoming Events Section */}
+              <div className="mb-8">
+                <h3 className="text-xl font-bold text-white mb-4">
+                  Upcoming Events
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {upcomingEvents.map((event) => (
+                    <UpcomingEventCard key={event.id} event={event} />
+                  ))}
+                </div>
+              </div>
 
-          {/* Event Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {events.map((event) => (
-              <EventCard key={event.id} event={event} />
-            ))}
+              {/* Event Cards Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {events.map((event) => (
+                  <EventCard key={event.id} event={event} />
+                ))}
+              </div>
+            </div>
+
+            {/* Calendar Column */}
+            <div className="lg:col-span-1">
+              <CalendarWidget events={[...events, ...upcomingEvents]} />
+            </div>
           </div>
 
           {/* Add Event Form */}
@@ -553,35 +580,8 @@ const NetworkAlarm = () => {
             onSubmit={handleAddEvent}
           />
         </main>
-        {/* Mobile Sidebar */}
-        {mobileOpen && (
-          <div className="fixed inset-0 z-50 bg-black bg-opacity-50 md:hidden">
-            <div ref={sidebarRef} className="w-64 h-full bg-slate-800 p-4">
-              {/* Sidebar content */}
-              <div className="flex items-center gap-4 mb-6">
-                <img
-                  src="../src/assets/Logo.png"
-                  alt="Logo"
-                  className="w-12 h-12 object-contain"
-                />
-                <h1 className="text-xl font-bold text-white">
-                  <span className="text-orange-500">Network</span> Alarm
-                </h1>
-              </div>
-              {navItems.map((item) => (
-                <button
-                  key={item.text}
-                  className="flex items-center gap-4 p-4 text-gray-400 bg-slate-800 hover:text-orange-500 rounded-lg"
-                >
-                  <item.icon size={20} />
-                  <span>{item.text}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
 
-        {/* Bottom Navigation - Mobile */}
+        {/* Mobile Navigation */}
         <nav className="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 md:hidden">
           <div className="flex justify-around p-4">
             {navItems.slice(0, 4).map((item) => (

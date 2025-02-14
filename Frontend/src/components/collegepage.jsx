@@ -32,7 +32,7 @@ const CollegeCard = ({ college }) => {
 
   return (
     <div
-      onClick={() => navigate('/home')}
+      onClick={() => navigate('/club')}
       className="bg-slate-800 rounded-xl p-6 cursor-pointer hover:bg-slate-700 transition-all duration-200"
     >
       <div className="flex items-start gap-6">

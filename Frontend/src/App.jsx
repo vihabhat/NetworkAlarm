@@ -7,7 +7,9 @@ import Home from '../src/components/home.jsx';
 import SuccessPage from '../src/components/successpage.jsx';
 import CollegePage from '../src/components/collegepage.jsx';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-
+// import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import EventDetailsPage from './components/eventsdetailpage.jsx';
+import ClubsPage from './components/club.jsx';
 
 const App = () => {
   return (
@@ -23,6 +25,9 @@ const App = () => {
         <Route path="/home" element={<Home/>} />
         <Route path='/collegepage' element={<CollegePage/>} />
         <Route path="/settings" element={<div>Settings Page</div>} />
+        {/* <Route path="/" element={<NetworkAlarm />} /> */}
+        <Route path="/events" element={<EventDetailsPage />} />
+        <Route path="/club" element={<ClubsPage/>}/>
       </Routes>
     </Router>
   );

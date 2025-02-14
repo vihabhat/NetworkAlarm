@@ -5,7 +5,7 @@ from datetime import datetime
 
 # Initialize Flask app and configure CORS
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:5173"])  # Allowing only your frontend's origin
+CORS(app, origins=["http://localhost:5173"])
 
 # Database connection
 def get_db_connection():
@@ -20,10 +20,9 @@ def get_db_connection():
 # User registration route
 @app.route('/api/logins', methods=['POST'])
 def register_user():
-    # Get data from request
     data = request.get_json()
-
-    # Extract user data from the request
+    
+    # Extract user data
     name = data.get("name")
     college_name = data.get("collegeName")
     email = data.get("email")
@@ -35,33 +34,29 @@ def register_user():
     year_of_study = data.get("yearOfStudy")
     address = data.get("address")
 
-    # Basic validation
-    if not name or not college_name or not email or not phone or not college_id or not username or not password:
+    if not all([name, college_name, email, phone, college_id, username, password]):
         return jsonify({"message": "All fields are required"}), 400
     if password != confirm_password:
         return jsonify({"message": "Passwords do not match"}), 400
 
-    # Create a new user in the database
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-
-        # Insert user data into the users table
+        
         cursor.execute("""
             INSERT INTO users (name, college_name, email, phone, college_id, username, password, year_of_study, address)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, (name, college_name, email, phone, college_id, username, password, year_of_study, address))
         
-        # Commit the transaction and close the connection
         conn.commit()
-        cursor.close()
-        conn.close()
-
         return jsonify({"message": "User registered successfully"}), 201
     except Exception as e:
         return jsonify({"message": f"An error occurred: {str(e)}"}), 500
+    finally:
+        cursor.close()
+        conn.close()
 
-# User login route (for later use)
+# Get user details by email
 @app.route('/api/users/<email>', methods=['GET'])
 def get_user(email):
     try:
@@ -85,8 +80,7 @@ def get_user(email):
                 'username': user[4]
             }
             return jsonify(user_data), 200
-        else:
-            return jsonify({'message': 'User not found'}), 404
+        return jsonify({'message': 'User not found'}), 404
             
     except Exception as e:
         return jsonify({'message': f'An error occurred: {str(e)}'}), 500
@@ -94,7 +88,7 @@ def get_user(email):
         cursor.close()
         conn.close()
 
-# Modified login route to return user data
+# User login route
 @app.route('/api/logins/login', methods=['POST'])
 def login_user():
     data = request.get_json()
@@ -127,15 +121,14 @@ def login_user():
                     "username": user[4]
                 }
             }), 200
-        else:
-            return jsonify({"message": "Invalid credentials"}), 401
+        return jsonify({"message": "Invalid credentials"}), 401
     except Exception as e:
         return jsonify({"message": f"An error occurred: {str(e)}"}), 500
     finally:
         cursor.close()
         conn.close()
 
-# Modified events routes
+# Get all events
 @app.route('/api/events', methods=['GET'])
 def get_events():
     try:
@@ -143,7 +136,8 @@ def get_events():
         cursor = conn.cursor()
         cursor.execute("""
             SELECT id, title, description, date, time, college, 
-                   image, likes, comments, shares, verified
+                   image, likes, comments, shares, verified,
+                   location, full_description, agenda
             FROM events 
             ORDER BY date DESC, time DESC
         """)
@@ -151,7 +145,7 @@ def get_events():
         
         events_list = []
         for event in events:
-            events_list.append({
+            event_dict = {
                 'id': event[0],
                 'title': event[1],
                 'description': event[2],
@@ -162,8 +156,12 @@ def get_events():
                 'likes': event[7],
                 'comments': event[8],
                 'shares': event[9],
-                'verified': event[10]
-            })
+                'verified': event[10],
+                'location': event[11],
+                'fullDescription': event[12],
+                'agenda': event[13].split('\n') if event[13] else None
+            }
+            events_list.append(event_dict)
         
         return jsonify({'events': events_list}), 200
     except Exception as e:
@@ -172,6 +170,50 @@ def get_events():
         cursor.close()
         conn.close()
 
+# Get specific event by ID
+@app.route('/api/events/<int:id>', methods=['GET'])
+def get_event(id):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            SELECT id, title, description, date, time, college, 
+                   image, likes, comments, shares, verified,
+                   location, full_description, agenda
+            FROM events 
+            WHERE id = %s
+        """, (id,))
+        
+        event = cursor.fetchone()
+        
+        if event:
+            event_data = {
+                'id': event[0],
+                'title': event[1],
+                'description': event[2],
+                'date': event[3].strftime('%Y-%m-%d'),
+                'time': event[4].strftime('%H:%M'),
+                'college': event[5],
+                'image': event[6],
+                'likes': event[7],
+                'comments': event[8],
+                'shares': event[9],
+                'verified': event[10],
+                'location': event[11],
+                'fullDescription': event[12],
+                'agenda': event[13].split('\n') if event[13] else None
+            }
+            return jsonify(event_data), 200
+        return jsonify({'message': 'Event not found'}), 404
+            
+    except Exception as e:
+        return jsonify({'message': f'An error occurred: {str(e)}'}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
+# Create new event
 @app.route('/api/events', methods=['POST'])
 def create_event():
     data = request.get_json()
@@ -180,20 +222,27 @@ def create_event():
         conn = get_db_connection()
         cursor = conn.cursor()
         
-        # Convert string date and time to proper PostgreSQL format
         date = datetime.strptime(data['date'], '%Y-%m-%d').date()
         time = datetime.strptime(data['time'], '%H:%M').time()
         
         cursor.execute("""
             INSERT INTO events (
                 title, description, date, time, college, 
-                image, likes, comments, shares, verified
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                image, likes, comments, shares, verified,
+                location, full_description, agenda
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id
         """, (
-            data['title'], data['description'], date, 
-            time, data['college'], data.get('image', '/api/placeholder/600/300'),
-            0, 0, 0, True
+            data['title'], 
+            data['description'], 
+            date, 
+            time, 
+            data['college'],
+            data.get('image', '/api/placeholder/600/300'),
+            0, 0, 0, True,
+            data.get('location'),
+            data.get('fullDescription', data['description']),
+            '\n'.join(data.get('agenda', [])) if data.get('agenda') else None
         ))
         
         new_event_id = cursor.fetchone()[0]
