@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
 import { useTheme, useMediaQuery } from "@mui/material";
+import backgroundImage from '/src/assets/bg1.jpeg';
 
 function Login() {
   const navigate = useNavigate();
@@ -63,11 +64,51 @@ function Login() {
   };
 
   return (
-    <Box sx={{ height: "100vh", width: "100vw", background: "#0D1F2D", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <Card sx={{ width: "100%", maxWidth: { xs: "90%", sm: "400px", md: "1000px" }, display: "grid", gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, borderRadius: 2, boxShadow: "0 4px 24px rgba(0, 0, 0, 0.15)" }}>
+    <Box 
+      sx={{ 
+        height: "100vh", 
+        width: "100vw", 
+        background: `url(${backgroundImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        display: "flex", 
+        alignItems: "center", 
+        justifyContent: "center",
+        "&::before": {
+          content: '""',
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: "rgba(13, 31, 45, 0.75)", // Dark overlay
+          zIndex: 0
+        }
+      }}
+    >
+      <Card sx={{ 
+        width: "100%", 
+        maxWidth: { xs: "90%", sm: "400px", md: "1000px" }, 
+        display: "grid", 
+        gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, 
+        borderRadius: 2, 
+        boxShadow: "0 4px 24px rgba(0, 0, 0, 0.15)",
+        position: "relative",
+        zIndex: 1
+      }}>
         
         {/* Left Side - Welcome Section (Hidden on mobile) */}
-        <Box sx={{ p: 6, background: "linear-gradient(to right, rgb(231, 88, 48), rgb(231, 88, 48))", color: "black", display: "flex", flexDirection: "column", justifyContent: "space-between", height: "auto", display: { xs: "none", md: "flex" } }}>
+        <Box sx={{ 
+          p: 6, 
+          background: "linear-gradient(to right, rgb(231, 88, 48), rgb(231, 88, 48))", 
+          color: "black", 
+          display: "flex", 
+          flexDirection: "column", 
+          justifyContent: "space-between", 
+          height: "auto", 
+          display: { xs: "none", md: "flex" } 
+        }}>
           <Box>
             <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 4 }}>
               <Box component="img" src="../src/assets/Logo.png" alt="Logo" sx={{ height: "110px", width: "auto" }} />

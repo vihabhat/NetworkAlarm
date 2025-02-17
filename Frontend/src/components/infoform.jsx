@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -27,6 +26,7 @@ import {
 } from "@mui/icons-material";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import Logo from "../assets/Logo.png";
+import backgroundImage from '/src/assets/bg1.jpeg';
 
 const theme = createTheme({
   palette: { primary: { main: "rgb(222, 82, 43)" } },
@@ -139,55 +139,53 @@ const InfoForm = () => {
 
   const WelcomeSection = ({ isMobile }) => (
     <Box sx={{ maxWidth: "100vw", overflow: "hidden" }}>
-  <Box sx={{ maxWidth: "100vw", overflow: "hidden" }}>
-    <Box
-      sx={{
-        color: "white",
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        p: isMobile ? 1 : { xs: 0, md: 0 },
-        alignItems: isMobile ? "center" : "flex-start",
-        textAlign: isMobile ? "center" : "left",
-        justifyContent: "center",
-      }}
-    >
-      <Box 
-        sx={{ 
-          mb: isMobile ? 3 : 6, 
-          width: "100%", 
-          display: "flex", 
-          flexDirection: "column", 
-          alignItems: isMobile ? "center" : "flex-start" 
+      <Box
+        sx={{
+          color: "white",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          p: isMobile ? 1 : { xs: 0, md: 0 },
+          alignItems: isMobile ? "center" : "flex-start",
+          textAlign: isMobile ? "center" : "left",
+          justifyContent: "center",
         }}
       >
-        <img
-          src={Logo}
-          alt="Logo"
-          style={{
-            height: isMobile ? 80 : 110,
-            width: "auto",
-            maxWidth: "100%",
+        <Box 
+          sx={{ 
+            mb: isMobile ? 3 : 6, 
+            width: "100%", 
+            display: "flex", 
+            flexDirection: "column", 
+            alignItems: isMobile ? "center" : "flex-start" 
           }}
-        />
-        <Typography variant="h5" sx={{ mt: 2 }}>
-          Network Alarm
+        >
+          <img
+            src={Logo}
+            alt="Logo"
+            style={{
+              height: isMobile ? 80 : 110,
+              width: "auto",
+              maxWidth: "100%",
+            }}
+          />
+          <Typography variant="h5" sx={{ mt: 2 }}>
+            Network Alarm
+          </Typography>
+        </Box>
+
+        <Typography variant="h3" fontWeight="bold" sx={{ mb: 2, fontSize: isMobile ? "2rem" : "3rem" }}>
+          Welcome
+        </Typography>
+        <Typography variant="h6" sx={{ opacity: 0.9, mb: isMobile ? 2 : 0 }}>
+          Please fill in your information to continue
+        </Typography>
+
+        <Typography sx={{ mt: isMobile ? 2 : "auto", opacity: 0.7 }}>
+          www.networkalarm.com
         </Typography>
       </Box>
-
-      <Typography variant="h3" fontWeight="bold" sx={{ mb: 2, fontSize: isMobile ? "2rem" : "3rem" }}>
-        Welcome
-      </Typography>
-      <Typography variant="h6" sx={{ opacity: 0.9, mb: isMobile ? 2 : 0 }}>
-        Please fill in your information to continue
-      </Typography>
-
-      <Typography sx={{ mt: isMobile ? 2 : "auto", opacity: 0.7 }}>
-        www.networkalarm.com
-      </Typography>
     </Box>
-  </Box>
- </Box>
   );
 
   return (
@@ -199,7 +197,21 @@ const InfoForm = () => {
             width: "100vw",
             display: "flex",
             alignItems: "center",
-            background: "rgb(13, 32, 48)",
+            background: `url(${backgroundImage})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            position: "relative",
+            "&::before": {
+              content: '""',
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: "rgba(13, 32, 48, 0.85)", // Dark overlay
+              zIndex: 0
+            }
           }}
         >
           <Container
@@ -207,6 +219,8 @@ const InfoForm = () => {
             sx={{
               width: "100%",
               px: { xs: 1, sm: 2 },
+              position: "relative",
+              zIndex: 1
             }}
           >
             <Grid
