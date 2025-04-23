@@ -112,11 +112,13 @@ function Login() {
           <Box>
             <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 4 }}>
               <Box component="img" src="../src/assets/Logo.png" alt="Logo" sx={{ height: "110px", width: "auto" }} />
-              <Typography variant="h5" sx={{ fontWeight: "800", color: "black" }}>Network Alarm</Typography>
+              <Typography variant="h4" sx={{ fontWeight: "800", color: "black" }}>Network Alarm</Typography>
             </Box>
-            <Typography variant="h3" fontWeight="bold" sx={{ mb: 2 }}>Welcome Page</Typography>
-            <Typography variant="h6" sx={{ color: "rgba(2, 2, 2, 0.93)" }}>Sign in to continue access</Typography>
+            <Typography variant="h5" fontWeight="555" sx={{ mb: 3 }}>"Empowering Clubs with Insights"</Typography>
+            <Typography variant="h6"  sx={{ mb: 2 }}>-Never miss a beat!!</Typography>
+            
           </Box>
+          {/* <Typography variant="h6" sx={{ color: "rgba(2, 2, 2, 0.93)" }}>Sign in to continue access</Typography> */}
           <Typography sx={{ color: "rgba(9, 9, 9, 0.6)" }}>www.networkalarm.com</Typography>
         </Box>
 

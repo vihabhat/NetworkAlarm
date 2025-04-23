@@ -49,14 +49,14 @@ const defaultCollegeEvents = [
 const upcomingEvents = [
   {
     id: 2,
-    title: "AI Workshop",
-    date: "2024-01-25",
-    time: "14:00",
+    title: "Student Parliment",
+    date: "2024-03-04",
+    time: "09:30",
   },
   {
     id: 3,
     title: "Career Fair",
-    date: "2024-01-28",
+    date: "2024-02-23",
     time: "10:00",
   },
 ];
