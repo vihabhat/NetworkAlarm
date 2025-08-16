@@ -50,13 +50,13 @@ const upcomingEvents = [
   {
     id: 2,
     title: "Student Parliment",
-    date: "2024-03-04",
+    date: "2024-05-15",
     time: "09:30",
   },
   {
     id: 3,
     title: "Career Fair",
-    date: "2024-02-23",
+    date: "2024-05-23",
     time: "10:00",
   },
 ];
